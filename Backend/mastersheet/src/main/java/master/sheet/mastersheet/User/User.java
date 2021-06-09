@@ -3,7 +3,7 @@ package master.sheet.mastersheet.User;
 public class User{
     private String username;
     private String email;
-    private String role;
+    private int role;
     private String first_name;
     private String last_name;
     private String BirthDate;
@@ -40,14 +40,14 @@ public class User{
     /**
      * @return String return the role
      */
-    public String getRole() {
+    public int getRole() {
         return role;
     }
 
     /**
      * @param role the role to set
      */
-    public void setRole(String role) {
+    public void setRole(int role) {
         this.role = role;
     }
 
