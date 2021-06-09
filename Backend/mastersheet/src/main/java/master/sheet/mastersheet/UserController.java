@@ -11,6 +11,7 @@ import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 
 import master.sheet.mastersheet.User.User;
+import master.sheet.mastersheet.User.UserPassword;
 
 import java.sql.*;
 @RestController
@@ -56,6 +57,21 @@ public class UserController{
 			return false;
 		}
 	}
+    public static boolean updatePassword(UserPassword u){
+        try{
+            Class.forName("org.mariadb.jdbc.Driver");  
+			Connection con=DriverManager.getConnection(  
+			"jdbc:mariadb://localhost:"+port+"/"+database,username,password);
+			Statement stmt = con.createStatement();
+            String sql = "UPDATE "+userTable+" SET password = '"+u.getPassword()+"' WHERE uid = '"+u.getUid()+"'";
+            stmt.executeUpdate(sql);
+            return true;
+        }
+        catch(Exception e){
+            System.out.println(e);
+            return false;
+        }
+    }
     @GetMapping()
     public ResponseEntity<User[]> getUsers(){
         try{
@@ -104,7 +120,6 @@ public class UserController{
                 return ResponseEntity.accepted().build();
                 else
                 return ResponseEntity.badRequest().build();
-
             }
             else{
                 return ResponseEntity.noContent().build();
