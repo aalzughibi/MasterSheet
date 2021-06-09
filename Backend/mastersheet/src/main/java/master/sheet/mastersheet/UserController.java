@@ -6,6 +6,7 @@ import java.util.UUID;
 import javax.validation.Valid;
 
 import org.apache.commons.lang3.RandomStringUtils;
+import org.apache.commons.validator.routines.EmailValidator;
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 
@@ -64,33 +65,52 @@ public class UserController{
 			Statement stmt = con.createStatement();
             String sql = "SELECT count(*) FROM "+userTable;
             ResultSet rs=stmt.executeQuery(sql);  
-            // System.out.println("length of users: "+rs.getInt(1));
-			// while(rs.next())  
             rs.next();
-            User[] users = new User[10];
-            System.out.println("users length: "+users.length);
+            User[] users = new User[rs.getInt(1)];
              sql = "SELECT * FROM "+userTable;
              rs=stmt.executeQuery(sql);  
-            //  id int NOT NULL PRIMARY KEY AUTO_INCREMENT,username VARCHAR(255) NOT NULL UNIQUE,email VARCHAR(255) NOT NULL UNIQUE,password VARCHAR(255) NOT NULL,role int NOT NULL,first_name VARCHAR(255) NOT NULL,last_name VARCHAR(255) NOT NULL,display_name VARCHAR(255) NOT NULL,uid VARCHAR(255) NOT NULL,BirthDate VARCHAR(255) NOT NULL,first_time int NOT NULL
-            // for(int i=0;i<users.length;i++){
                 int counter=0;
                 while(rs.next()) {
-                    System.out.println(rs.getString(3));
-                users[counter].setUsername(rs.getString(2));
-                users[counter].setEmail(rs.getString(3));
-                users[counter].setRole(rs.getInt(5));
-                users[counter].setFirst_name(rs.getString(6));
-                users[counter].setLast_name(rs.getString(7));
-                users[counter].setDisplay_name(rs.getString(8));
-                users[counter].setUid(rs.getString(9));
-                users[counter].setBirthDate(rs.getString(10));
-                users[counter++].setFirst_time(rs.getInt(11));
+                User userTemp = new User();
+                userTemp.setUsername(rs.getString(2));
+                userTemp.setEmail(rs.getString(3));
+                userTemp.setRole(rs.getInt(5));
+                userTemp.setFirst_name(rs.getString(6));
+                userTemp.setLast_name(rs.getString(7));
+                userTemp.setDisplay_name(rs.getString(8));
+                userTemp.setUid(rs.getString(9));
+                userTemp.setBirthDate(rs.getString(10));
+                userTemp.setFirst_time(rs.getInt(11));
+                users[counter++] = userTemp;
             }
             return new ResponseEntity(users,HttpStatus.OK);
         }
         catch(Exception e){
         System.out.println(e);
         return ResponseEntity.noContent().build();
+        }
+    }
+    @PostMapping(produces = {MediaType.APPLICATION_JSON_VALUE},consumes = {MediaType.APPLICATION_JSON_VALUE})
+    public ResponseEntity<User> PostUser(@RequestBody User u){
+        try{
+            if (((u.getUsername().length()>=4)&&(u.getUsername().length()<=16)) &&
+            (EmailValidator.getInstance().isValid(u.getEmail())) &&
+            ((u.getFirst_name().length()>=2)&&(u.getFirst_name().length()<=20)) &&
+            ((u.getLast_name().length()>=2)&&(u.getLast_name().length()<=20))&&
+            ((u.getDisplay_name().length()>=2)&&(u.getDisplay_name().length()<=20))
+            ){
+
+                if(InsertUser(u))
+                return ResponseEntity.accepted().build();
+                else
+                return ResponseEntity.badRequest().build();
+
+            }
+            else{
+                return ResponseEntity.noContent().build();
+            }
+        }catch(Exception e){
+            return ResponseEntity.badRequest().build();
         }
     }
 }
