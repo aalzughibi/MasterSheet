@@ -1,10 +1,12 @@
 package master.sheet.mastersheet;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 import master.sheet.mastersheet.User.User;
 
 import java.sql.*;
+import java.util.Random;
 @SpringBootApplication
 public class MastersheetApplication {
 	public static String port = "3306";
@@ -21,27 +23,14 @@ public class MastersheetApplication {
 			Statement stmt = con.createStatement();
 			ResultSet rs=stmt.executeQuery("select * from user");  
 			while(rs.next())  
-			System.out.println(rs.getInt(1)+"  "+rs.getString(2)+"  "+rs.getString(3)); 
+			System.out.println(rs.getInt(1)+"  "+rs.getString(2)+"  "+rs.getString(3)+"  "+rs.getString(4)); 
 		}catch(Exception e){
 		System.out.println("System discover error.");
 		}
  
 	}
-	public static boolean InsertUser(User u){
-		try{
-			Class.forName("org.mariadb.jdbc.Driver");  
-			Connection con=DriverManager.getConnection(  
-			"jdbc:mariadb://localhost:"+port+"/"+database,username,password);
-			Statement stmt = con.createStatement();
-			String sql = "INSERT INTO "+userTable+" (username,password,email,first_name,last_name,role,display_name,uid,BirthDate,first_time) "+
-			String.format("VALUES ('%s','%s','%s','%s','%s',%s,'%s','%s','%s',%s)",u.getUsername(),"11223344",u.getEmail(),u.getFirst_name(),u.getLast_name(),u.getRole(),u.getDisplay_name(),"test te2s333 tes",u.getBirthDate(),0);
-			stmt.executeUpdate(sql);
-			return true;
-		}catch(Exception e){
-			System.out.println(e);
-			return false;
-		}
-	}
+
+
 	public static boolean checkDatabase(){
         try{  
 			Class.forName("org.mariadb.jdbc.Driver");  
@@ -125,20 +114,15 @@ public class MastersheetApplication {
 		createDatabase();
 		createUserTable();
 		User u = new User();
-		u.setUsername("abdullah011023");
-		u.setEmail("mrabdullah011w023@gmail.com");
+		u.setUsername("abdullah0112023");
+		u.setEmail("mrabdullah011w2023@gmail.com");
 		u.setRole(0);
 		u.setFirst_name("Abdullah");
 		u.setLast_name("Alzughibi");
 		u.setBirthDate("1999/3/20");
 		u.setDisplay_name("abody");
-		// InsertUser(u);
-		if (InsertUser(u))
-		System.out.println("add succeefully");
-		else
-		System.out.println("add fail");
-		System.out.println("start");
 		printTable();
+		System.out.println(RandomStringUtils.randomAlphanumeric(40));
 		SpringApplication.run(MastersheetApplication.class, args);
 	}
 

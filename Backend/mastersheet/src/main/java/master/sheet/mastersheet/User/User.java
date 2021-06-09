@@ -8,12 +8,32 @@ public class User{
     private String last_name;
     private String BirthDate;
     private String display_name;
-
+    private int first_time;
+    private String uid;
+    public User(){
+        username = " ";
+        email=" ";
+        role=-1;
+        first_name=" ";
+        last_name = " ";
+        BirthDate=" ";
+        display_name=" ";
+        first_time=-1;
+        uid=" ";
+    }
     /**
      * @return String return the username
      */
     public String getUsername() {
         return username;
+    }
+
+    public int getFirst_time() {
+        return first_time;
+    }
+
+    public void setFirst_time(int first_time) {
+        this.first_time = first_time;
     }
 
     /**
@@ -105,6 +125,21 @@ public class User{
      */
     public void setDisplay_name(String display_name) {
         this.display_name = display_name;
+    }
+
+
+    /**
+     * @return String return the uid
+     */
+    public String getUid() {
+        return uid;
+    }
+
+    /**
+     * @param uid the uid to set
+     */
+    public void setUid(String uid) {
+        this.uid = uid;
     }
 
 }
