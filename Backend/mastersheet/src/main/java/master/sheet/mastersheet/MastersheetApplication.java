@@ -111,41 +111,7 @@ public class MastersheetApplication {
                 return false;
             }
     }
-	public  String setJWT(){
-		try {
-			String secretkey="qwertypassword";
-		
-			//The JWT signature algorithm we will be using to sign the token
-			String jwtToken = Jwts.builder()
-				.setSubject("admin")
-				.setAudience("Solr").setId("sskssjkbkjsks").claim("userId", "value no ava").claim("username", "mohammed0102")
-				.signWith(SignatureAlgorithm.HS256,secretkey.getBytes()).compact();
-		
-			System.out.println("jwtToken=");
-			System.out.println(jwtToken);
-			return jwtToken;
-		} catch (Exception e)
-		{
-			System.out.println(e.getMessage());
-			return "Error";
-		}
-	}
-	public String[] getJWT(String token){
-	// Decode JWT
-	String[] chunks = token.split("\\.");
-	Base64.Decoder decoder = Base64.getDecoder();
-String header = new String(decoder.decode(chunks[0]));
-String payload = new String(decoder.decode(chunks[1]));
-System.out.println(header);
-System.out.println(payload);
-String[] jwt = {header,payload};
-return jwt;
-// end decode jwt
-	}
 	public static void main(String[] args) {
-
-
-
 		createDatabase();
 		createUserTable();
 		printTable();
