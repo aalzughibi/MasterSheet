@@ -1,8 +1,6 @@
 package master.sheet.mastersheet;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Random;
-import java.util.UUID;
+import java.util.*;
+
 import javax.validation.Valid;
 
 import org.apache.commons.lang3.RandomStringUtils;
@@ -22,6 +20,7 @@ public class UserController{
     public static String username = "root";
     public static String password = "1234";
     public static String userTable="user";
+
     // deafult port=3306 database=MasterSheet root 1234
     private static char[] generatePassword(int length) {
 		String capitalCaseLetters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
@@ -57,21 +56,7 @@ public class UserController{
 			return false;
 		}
 	}
-    public static boolean updatePassword(UserPassword u){
-        try{
-            Class.forName("org.mariadb.jdbc.Driver");  
-			Connection con=DriverManager.getConnection(  
-			"jdbc:mariadb://localhost:"+port+"/"+database,username,password);
-			Statement stmt = con.createStatement();
-            String sql = "UPDATE "+userTable+" SET password = '"+u.getPassword()+"' WHERE uid = '"+u.getUid()+"'";
-            stmt.executeUpdate(sql);
-            return true;
-        }
-        catch(Exception e){
-            System.out.println(e);
-            return false;
-        }
-    }
+
     @GetMapping()
     public ResponseEntity<User[]> getUsers(){
         try{

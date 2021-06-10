@@ -3,10 +3,13 @@ import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
 import master.sheet.mastersheet.User.User;
 
+import java.util.Base64;
 import java.sql.*;
-import java.util.Random;
+
 @SpringBootApplication
 public class MastersheetApplication {
 	public static String port = "3306";
@@ -29,13 +32,11 @@ public class MastersheetApplication {
 		}
  
 	}
-
-
 	public static boolean checkDatabase(){
         try{  
 			Class.forName("org.mariadb.jdbc.Driver");  
 			Connection con=DriverManager.getConnection(  
-			"jdbc:mariadb://localhost:"+port+"/",username,password);
+			"jdbc:mariadb://localhost:"+port+"/?allowPublicKeyRetrieval=true&useSSL=false",username,password);
 			ResultSet resultSet = con.getMetaData().getCatalogs();
 			while (resultSet.next()) {
 				String databaseName = resultSet.getString(1);
@@ -54,7 +55,7 @@ public class MastersheetApplication {
 		try{  
 			Class.forName("org.mariadb.jdbc.Driver");  
 			Connection con=DriverManager.getConnection(  
-			"jdbc:mariadb://localhost:"+port+"/"+database,username,password);
+			"jdbc:mariadb://localhost:"+port+"/"+database+"?allowPublicKeyRetrieval=true&useSSL=false",username,password);
 			DatabaseMetaData databaseMetaData = con.getMetaData();
 			ResultSet resultSet = databaseMetaData.getTables(null, null, null, new String[] {"TABLE"});
 	while (resultSet.next()) {
@@ -76,7 +77,7 @@ public class MastersheetApplication {
 		try{  
 			Class.forName("org.mariadb.jdbc.Driver");  
 			Connection con=DriverManager.getConnection(  
-			"jdbc:mariadb://localhost:"+port+"/"+database,username,password);
+			"jdbc:mariadb://localhost:"+port+"/"+database+"?allowPublicKeyRetrieval=true&useSSL=false",username,password);
 			if (!checkTable(userTable)){
 				Statement stmt = con.createStatement();
 				String sql = "CREATE TABLE "+userTable+"(id int NOT NULL PRIMARY KEY AUTO_INCREMENT,username VARCHAR(255) NOT NULL UNIQUE,email VARCHAR(255) NOT NULL UNIQUE,password VARCHAR(255) NOT NULL,role int NOT NULL,first_name VARCHAR(255) NOT NULL,last_name VARCHAR(255) NOT NULL,display_name VARCHAR(255) NOT NULL,uid VARCHAR(255) NOT NULL,BirthDate VARCHAR(255) NOT NULL,first_time int NOT NULL)";
@@ -95,7 +96,7 @@ public class MastersheetApplication {
         try{  
 			Class.forName("org.mariadb.jdbc.Driver");  
 			Connection con=DriverManager.getConnection(  
-			"jdbc:mariadb://localhost:"+port+"/",username,password);
+			"jdbc:mariadb://localhost:"+port+"/?allowPublicKeyRetrieval=true&useSSL=false",username,password);
 			if (!checkDatabase()){
 				Statement stmt = con.createStatement();
 				String sql = "CREATE DATABASE "+database;
@@ -110,19 +111,44 @@ public class MastersheetApplication {
                 return false;
             }
     }
+	public  String setJWT(){
+		try {
+			String secretkey="qwertypassword";
+		
+			//The JWT signature algorithm we will be using to sign the token
+			String jwtToken = Jwts.builder()
+				.setSubject("admin")
+				.setAudience("Solr").setId("sskssjkbkjsks").claim("userId", "value no ava").claim("username", "mohammed0102")
+				.signWith(SignatureAlgorithm.HS256,secretkey.getBytes()).compact();
+		
+			System.out.println("jwtToken=");
+			System.out.println(jwtToken);
+			return jwtToken;
+		} catch (Exception e)
+		{
+			System.out.println(e.getMessage());
+			return "Error";
+		}
+	}
+	public String[] getJWT(String token){
+	// Decode JWT
+	String[] chunks = token.split("\\.");
+	Base64.Decoder decoder = Base64.getDecoder();
+String header = new String(decoder.decode(chunks[0]));
+String payload = new String(decoder.decode(chunks[1]));
+System.out.println(header);
+System.out.println(payload);
+String[] jwt = {header,payload};
+return jwt;
+// end decode jwt
+	}
 	public static void main(String[] args) {
+
+
+
 		createDatabase();
 		createUserTable();
-		User u = new User();
-		u.setUsername("abdullah0112023");
-		u.setEmail("mrabdullah011w2023@gmail.com");
-		u.setRole(0);
-		u.setFirst_name("Abdullah");
-		u.setLast_name("Alzughibi");
-		u.setBirthDate("1999/3/20");
-		u.setDisplay_name("abody");
 		printTable();
-		System.out.println(RandomStringUtils.randomAlphanumeric(40));
 		SpringApplication.run(MastersheetApplication.class, args);
 	}
 
