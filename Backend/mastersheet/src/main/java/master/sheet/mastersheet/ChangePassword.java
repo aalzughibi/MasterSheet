@@ -5,11 +5,13 @@ import java.util.UUID;
 
 import javax.validation.Valid;
 
+import org.json.JSONObject;
 // import org.apache.tomcat.util.http.MediaType;
 import org.springframework.http.*;
 import java.sql.*;
 import org.springframework.web.bind.annotation.*;
 
+import master.sheet.mastersheet.Auth.Auth;
 import master.sheet.mastersheet.User.User;
 import master.sheet.mastersheet.User.UserPassword;
 @RestController
@@ -26,7 +28,7 @@ public class ChangePassword {
 			Connection con=DriverManager.getConnection(  
 			"jdbc:mariadb://localhost:"+port+"/"+database,username,password);
 			Statement stmt = con.createStatement();
-            String sql = "UPDATE "+userTable+" SET password = '"+u.getPassword()+"' WHERE uid = '"+u.getUid()+"'";
+            String sql = "UPDATE "+userTable+" SET password = '"+u.getPassword()+"', first_time="+1+" WHERE uid = '"+u.getUid()+"'";
             stmt.executeUpdate(sql);
             return true;
         }
@@ -39,7 +41,7 @@ public class ChangePassword {
         try{
 			Class.forName("org.mariadb.jdbc.Driver");  
 			Connection con=DriverManager.getConnection(  
-                "jdbc:mariadb://localhost:"+port+"/"+database,username,password); 
+                "jdbc:mariadb://localhost:"+port+"/"+database+"?allowPublicKeyRetrieval=true&useSSL=false",username,password); 
 			//here sonoo is database name, root is username and password  
 			// System.out.println("Success Success Success Success Success Success Success Success Success Success Success Success Success ");
 			Statement stmt=con.createStatement();  
@@ -70,7 +72,11 @@ public class ChangePassword {
         }
     }
     @PostMapping()
-    public ResponseEntity<HashMap<String,Object>> ChangePasswordAccount(@RequestBody UserPassword up){
+    public ResponseEntity<HashMap<String,Object>> ChangePasswordAccount(@RequestHeader("Authorization") String header_auth ,@RequestBody UserPassword up){
+        // System.out.println(header_auth);
+        if(Auth.validJWT(header_auth)){
+        JSONObject jo =  Auth.convert_JsonString_To_Json(Auth.getJWTToken(header_auth)[1]);
+        System.out.println(jo.get("userId"));
         User user = userExist(up.getUid());
         System.out.println(up.getUid());
         if (user !=null){
@@ -84,6 +90,10 @@ public class ChangePassword {
     }
     else
     System.out.println("user does not exist");
-    return ResponseEntity.badRequest().build();
+    return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
 }
+else{
+    return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+}
+    }
 }

@@ -5,6 +5,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import master.sheet.mastersheet.Auth.Auth;
 import master.sheet.mastersheet.User.User;
 
 import java.util.Base64;
@@ -112,6 +113,8 @@ public class MastersheetApplication {
             }
     }
 	public static void main(String[] args) {
+		// Auth.validJWT("dddd");
+		// Auth.validJWT("eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJMT0dJTl9BVVRIIiwidXNlcklkIjoidDUwZmVSa3BldkJPd3Z5WEUwbDk2bng5MElpbURhWHJmUGNvQzVkUiIsImV4cGlyZWQiOjE2MjM2MDA2MzksInVzZXJuYW1lIjoiYWJvZCJ9.5CTRMuABy6_VMm8m0MO3O_kjBi8DmAnfNuO77T76HVk");
 		createDatabase();
 		createUserTable();
 		printTable();

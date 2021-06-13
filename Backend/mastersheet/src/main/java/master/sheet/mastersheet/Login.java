@@ -21,6 +21,7 @@ import java.time.ZoneOffset;
 
 import org.springframework.web.bind.annotation.*;
 import io.jsonwebtoken.SignatureAlgorithm;
+import master.sheet.mastersheet.Auth.Auth;
 import master.sheet.mastersheet.User.User;
 import master.sheet.mastersheet.User.UserPassword;
 @RestController
@@ -98,7 +99,7 @@ return jwt;
 		}
 	}
     @PostMapping
-    public ResponseEntity<HashMap<String,Object>> LoginUser(@RequestBody LoginUser lu){	
+    public ResponseEntity<Map<String,Object>> LoginUser(@RequestBody LoginUser lu){	
 		// check username and password
 		User user = checkLogin(lu.getUsername(),lu.getPassword());
 		if (user!=null){
@@ -106,12 +107,12 @@ return jwt;
 			LocalDateTime ldt = LocalDateTime.now().plusHours(1);
 			Object expired = ldt.toEpochSecond(ZoneOffset.UTC);
 			String jwt = setJWT("LOGIN_AUTH", user.getUid(),expired , user.getUsername());
-			HashMap data =new HashMap();
+			Map data =new HashMap();
 			data.put("JWT",jwt);
+			// Auth.validJWT(jwt);
 			Boolean isFirstTime =user.getFirst_time()==1?false:true;
 			data.put("first_time",isFirstTime);
 			data.put("expired", expired);
-
 			return new ResponseEntity<>(data,HttpStatus.OK);
 		}
 		return ResponseEntity.noContent().build();
