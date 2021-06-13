@@ -5,9 +5,11 @@ import javax.validation.Valid;
 
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.validator.routines.EmailValidator;
+import org.json.JSONObject;
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 
+import master.sheet.mastersheet.Auth.Auth;
 import master.sheet.mastersheet.User.User;
 import master.sheet.mastersheet.User.UserPassword;
 
@@ -91,26 +93,60 @@ public class UserController{
         return ResponseEntity.noContent().build();
         }
     }
-    @PostMapping(produces = {MediaType.APPLICATION_JSON_VALUE},consumes = {MediaType.APPLICATION_JSON_VALUE})
-    public ResponseEntity<User> PostUser(@RequestBody User u){
+    public static boolean isAdmin(String uid){
         try{
-            if (((u.getUsername().length()>=4)&&(u.getUsername().length()<=16)) &&
-            (EmailValidator.getInstance().isValid(u.getEmail())) &&
-            ((u.getFirst_name().length()>=2)&&(u.getFirst_name().length()<=20)) &&
-            ((u.getLast_name().length()>=2)&&(u.getLast_name().length()<=20))&&
-            ((u.getDisplay_name().length()>=2)&&(u.getDisplay_name().length()<=20))
-            ){
+			Class.forName("org.mariadb.jdbc.Driver");  
+			Connection con=DriverManager.getConnection(  
+			"jdbc:mariadb://localhost:"+port+"/"+database+"?allowPublicKeyRetrieval=true&useSSL=false",username,password);
+			Statement stmt = con.createStatement();
+            String sql = "select * from " +userTable + " where uid='"+uid+"'";
+            ResultSet rs=stmt.executeQuery(sql); 
+            rs.next();
+            // if (rs.rs.getInt(5)==0)
+            return rs.getInt(5)==0?true:false;
+        }catch(Exception e){
+            return false;
+        }
+    }
+    @PostMapping(produces = {MediaType.APPLICATION_JSON_VALUE},consumes = {MediaType.APPLICATION_JSON_VALUE})
+    public ResponseEntity<User> PostUser(@RequestHeader("Authorization") String header_auth, @RequestBody User u){//strat
+        try{//strat
+            if(Auth.validJWT(header_auth)){//start//end
+                JSONObject jo =  Auth.convert_JsonString_To_Json(Auth.getJWTToken(header_auth)[1]);
+                // check if thier admin or user
+                if(isAdmin(String.valueOf(jo.get("userId")))){
 
-                if(InsertUser(u))
-                return ResponseEntity.accepted().build();
-                else
-                return ResponseEntity.badRequest().build();
-            }
-            else{
+                    if (((u.getUsername().length()>=4)&&(u.getUsername().length()<=16)) &&
+                    (EmailValidator.getInstance().isValid(u.getEmail())) &&
+                    ((u.getFirst_name().length()>=2)&&(u.getFirst_name().length()<=20)) &&
+                    ((u.getLast_name().length()>=2)&&(u.getLast_name().length()<=20))&&
+                    ((u.getDisplay_name().length()>=2)&&(u.getDisplay_name().length()<=20))
+                    ){//start //end
+                        
+                        if(InsertUser(u))
+                        return ResponseEntity.accepted().build();
+                        else
+                        return ResponseEntity.badRequest().build();
+                    }
+                //end
+                    else{
                 return ResponseEntity.noContent().build();
             }
-        }catch(Exception e){
+            }
+        
+            else{
+                return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+            }
+        }
+        else{
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        }
+        }
+    
+
+        catch(Exception e){
             return ResponseEntity.badRequest().build();
         }
+
     }
 }
