@@ -170,9 +170,23 @@ try {
         JSONObject jo =  Auth.convert_JsonString_To_Json(Auth.getJWTToken(header_auth)[1]);
         String uid = String.valueOf(jo.get("userId"));
         if(uid.equals(userId)){
-            
+           User uu= ChangePassword.userExist(userId);
+           if (uu !=null){
+               user.setUid(userId);
+            if(updateDisplayName(user)){
+                return new ResponseEntity<>(HttpStatus.OK);
+            }else{
+                return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            }
+           }
+           else{
+
+               return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+           }
         }
-        return new ResponseEntity<>(HttpStatus.OK);
+        else{
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        }
     }
     else{
         return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
@@ -180,6 +194,17 @@ try {
 } catch (Exception e) {
     return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 }
+// {
+//     "username": "abody403",
+//     "email": "dddd@gmail.com",
+//     "role": 0,
+//     "first_name": "Abdullah",
+//     "last_name": "Rayan",
+//     "display_name": "AB",
+//     "first_time": 0,
+//     "uid": "5FIO9msXkpFGXyEMgthg4gAVb7XcpDQu9B45ZKOl",
+//     "birthDate": "1999/3/20"
+// },
 }
     private static boolean updateUser(User user){
         try {
@@ -201,8 +226,9 @@ try {
 			Connection con=DriverManager.getConnection(  
 			"jdbc:mariadb://localhost:"+port+"/"+database,username,password);
 			Statement stmt = con.createStatement();
-           String sql = "UPDATE "+userTable+" SET "+"display_name='"+user.getDisplay_name()+"'";
+           String sql = "UPDATE "+userTable+" SET "+"display_name='"+user.getDisplay_name()+"' WHERE uid='"+user.getUid()+"'";
             stmt.executeUpdate(sql);
+            System.out.println(user.getUid());
            return true;
         } catch (Exception e) {
             
