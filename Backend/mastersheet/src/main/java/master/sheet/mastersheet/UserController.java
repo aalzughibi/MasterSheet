@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import master.sheet.mastersheet.Auth.Auth;
 import master.sheet.mastersheet.User.User;
 import master.sheet.mastersheet.User.UserPassword;
+import master.sheet.mastersheet.Validate.Validate;
 
 import java.sql.*;
 @RestController
@@ -93,6 +94,121 @@ public class UserController{
         return ResponseEntity.noContent().build();
         }
     }
+    @GetMapping(path = "/{userId}")
+    public ResponseEntity<User> getUserByUid(@RequestHeader("Authorization") String header_auth,@PathVariable String userId){
+        try{
+            if(Auth.validJWT(header_auth)){//start//end
+                JSONObject jo =  Auth.convert_JsonString_To_Json(Auth.getJWTToken(header_auth)[1]);
+                // check if thier admin or user
+                if(isAdmin(String.valueOf(jo.get("userId")))){
+            Class.forName("org.mariadb.jdbc.Driver");  
+			Connection con=DriverManager.getConnection(  
+			"jdbc:mariadb://localhost:"+port+"/"+database,username,password);
+			Statement stmt = con.createStatement();
+            String sql = "SELECT COUNT(*) AS total FROM "+userTable+" WHERE uid='"+userId+"'";
+            ResultSet rs=stmt.executeQuery(sql);  
+            rs.next();
+            if (rs.getInt("total")==1){
+            sql = "SELECT * FROM "+userTable+" WHERE uid='"+userId+"'";
+            rs=stmt.executeQuery(sql);  
+            rs.next();
+                User userTemp = new User();
+                userTemp.setUsername(rs.getString(2));
+                userTemp.setEmail(rs.getString(3));
+                userTemp.setRole(rs.getInt(5));
+                userTemp.setFirst_name(rs.getString(6));
+                userTemp.setLast_name(rs.getString(7));
+                userTemp.setDisplay_name(rs.getString(8));
+                userTemp.setUid(rs.getString(9));
+                userTemp.setBirthDate(rs.getString(10));
+                userTemp.setFirst_time(rs.getInt(11));
+            return new ResponseEntity(userTemp,HttpStatus.OK);
+        }
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    }
+    return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+}
+return new ResponseEntity<>(HttpStatus.PRECONDITION_FAILED);
+        }
+        catch(Exception e){
+        System.out.println(e);
+        return ResponseEntity.noContent().build();
+        }
+    }
+    @PostMapping(path = "/{userId}")
+    public ResponseEntity<Map<String,Object>> updateUser(@RequestHeader("Authorization") String header_auth,@RequestBody User user,@PathVariable String userId){
+        try{
+            if(Auth.validJWT(header_auth)){
+                JSONObject jo =  Auth.convert_JsonString_To_Json(Auth.getJWTToken(header_auth)[1]);
+                if(isAdmin(String.valueOf(jo.get("userId")))){
+                    user.setUid(userId);
+                    if(updateUser(user)){
+                        return new ResponseEntity<>(HttpStatus.OK);
+                    }
+                    else{
+                        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+                    }
+                }
+                else{
+
+                    return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+                }
+            }
+            else{
+                return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
+            }
+        }
+        catch(Exception e){
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            
+        }
+    }
+@PutMapping(path = "/updateDisplayName/{userId}")
+public ResponseEntity<Map<String,Object>> updateDisplayName(@RequestHeader("Authorization") String header_auth,@RequestBody User user,@PathVariable String userId){
+try {
+    if(Auth.validJWT(header_auth)){
+        JSONObject jo =  Auth.convert_JsonString_To_Json(Auth.getJWTToken(header_auth)[1]);
+        String uid = String.valueOf(jo.get("userId"));
+        if(uid.equals(userId)){
+            
+        }
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+    else{
+        return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
+    }
+} catch (Exception e) {
+    return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+}
+}
+    private static boolean updateUser(User user){
+        try {
+            Class.forName("org.mariadb.jdbc.Driver");  
+			Connection con=DriverManager.getConnection(  
+			"jdbc:mariadb://localhost:"+port+"/"+database,username,password);
+			Statement stmt = con.createStatement();
+           String sql = "UPDATE "+userTable+" SET "+"first_name='"+user.getFirst_name()+"', last_name='"+user.getLast_name()+"', display_name='"+user.getDisplay_name()+"', role="+user.getRole()+" WHERE uid='"+user.getUid()+"'";
+            stmt.executeUpdate(sql);
+           return true;
+        } catch (Exception e) {
+            
+            return false;
+        }
+    }
+    private static boolean updateDisplayName(User user){
+        try {
+            Class.forName("org.mariadb.jdbc.Driver");  
+			Connection con=DriverManager.getConnection(  
+			"jdbc:mariadb://localhost:"+port+"/"+database,username,password);
+			Statement stmt = con.createStatement();
+           String sql = "UPDATE "+userTable+" SET "+"display_name='"+user.getDisplay_name()+"'";
+            stmt.executeUpdate(sql);
+           return true;
+        } catch (Exception e) {
+            
+            return false;
+        }
+    }
     public static boolean isAdmin(String uid){
         try{
 			Class.forName("org.mariadb.jdbc.Driver");  
@@ -102,7 +218,6 @@ public class UserController{
             String sql = "select * from " +userTable + " where uid='"+uid+"'";
             ResultSet rs=stmt.executeQuery(sql); 
             rs.next();
-            // if (rs.rs.getInt(5)==0)
             return rs.getInt(5)==0?true:false;
         }catch(Exception e){
             return false;
@@ -116,10 +231,10 @@ public class UserController{
                 // check if thier admin or user
                 if(isAdmin(String.valueOf(jo.get("userId")))){
 
-                    if (((u.getUsername().length()>=4)&&(u.getUsername().length()<=16)) &&
+                    if (Validate.isValidUsername(u.getUsername()) &&
                     (EmailValidator.getInstance().isValid(u.getEmail())) &&
-                    ((u.getFirst_name().length()>=2)&&(u.getFirst_name().length()<=20)) &&
-                    ((u.getLast_name().length()>=2)&&(u.getLast_name().length()<=20))&&
+                    Validate.isValidFirstName(u.getFirst_name()) &&
+                    Validate.isValidLastName(u.getLast_name())&&
                     ((u.getDisplay_name().length()>=2)&&(u.getDisplay_name().length()<=20))
                     ){//start //end
                         

@@ -80,13 +80,22 @@ public class ChangePassword {
         User user = userExist(up.getUid());
         System.out.println(up.getUid());
         if (user !=null){
+        // if(user.getRole())
+        if(Auth.isAdmin(up.getUid())){
         if(updatePassword(up))
         {
         System.out.println("success");
-            return ResponseEntity.ok().build();
+        Map<String,Object> hm = new HashMap<>();
+        hm.put("password", up.getPassword());
+
         }
         else
         System.out.println("fail");
+        return new ResponseEntity(HttpStatus.BAD_REQUEST);
+    }
+    else{
+        return new ResponseEntity(HttpStatus.UNAUTHORIZED);
+    }
     }
     else
     System.out.println("user does not exist");

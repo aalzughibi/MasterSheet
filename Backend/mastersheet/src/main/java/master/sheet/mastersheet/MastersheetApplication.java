@@ -87,7 +87,7 @@ public class MastersheetApplication {
 			con.close();  
             return true;
 			}catch(Exception e){
-                
+
 				System.out.println("Error Error Error Error Error Error Error Error Error Error Error Error Error Error Error Error Error Error Error Error ");
 				 System.out.println(e);
                 return false;
@@ -113,8 +113,6 @@ public class MastersheetApplication {
             }
     }
 	public static void main(String[] args) {
-		// Auth.validJWT("dddd");
-		// Auth.validJWT("eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJMT0dJTl9BVVRIIiwidXNlcklkIjoidDUwZmVSa3BldkJPd3Z5WEUwbDk2bng5MElpbURhWHJmUGNvQzVkUiIsImV4cGlyZWQiOjE2MjM2MDA2MzksInVzZXJuYW1lIjoiYWJvZCJ9.5CTRMuABy6_VMm8m0MO3O_kjBi8DmAnfNuO77T76HVk");
 		createDatabase();
 		createUserTable();
 		printTable();
