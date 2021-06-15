@@ -18,9 +18,14 @@
                             <input class="myInput"type="text"#username name="username" placeholder="Enter your Username" id="username"  required> 
                             <input class="myInput"type="text"#username name="displayname" placeholder="Enter your Display Name" id="displayname"  required>
                             <input class="myInput" type="email"  name="email" id="email" placeholder="Enter your Email "  required> 
-                            <label  >Choose your Birthdate</label>
+                            <label  >Choose Your Birthdate</label>
                             <input class="myInput" type="date"  name="birthdate" id="birthdate" required> 
-                           
+
+                            <select name="role" id="role">
+                                <option selected disabled hidden>Select Role</option>
+                                <option value="0"> Admin </option>
+                                <option value="1"> User</option>
+                            </select>
                         </div>
                         
                         <input type="submit" class="butt" value="Registar">

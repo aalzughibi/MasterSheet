@@ -28,9 +28,11 @@
 
   .myLeftCtn header {
     color: #492580;
-    font-size: 29px;
+    font-size: 35px;
     font-weight: 700;
     margin-bottom: 20px;
+    margin-top: 2px;
+    
   }
   
   .myCard {
@@ -118,13 +120,35 @@
     display: inline-block;
   }
 .myCard{
-    background-color: #eecbff;
-    height: 150%;
+    background: linear-gradient(45deg, #492580, #e73c60);
+    height: 180%;
+    padding-top: 60px;
 }
 .myLeftCtn{
-    background-color: aqua;
+    background-color: linear-gradient(45deg, #492580, #e73c60);
     height: auto;
     width: 70%;
-    
+    margin-left: 16%;
+}
+
+label{
+  float: left;
+  color: #492580;
+  font-size: 15px;
+  font-weight: 800;
+  padding-left: 33%; 
+}
+
+select{
+  width: 270px;
+  border-radius: 25px;
+  padding: 10px;
+  padding-left: 50px;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  border: none;
+  -webkit-box-shadow: 0px 10px 49px -14px rgba(0, 0, 0, 0.7);
+  -moz-box-shadow: 0px 10px 49px -14px rgba(0, 0, 0, 0.7);
+  box-shadow: 0px 10px 49px -14px rgba(0, 0, 0, 0.7);
 }
 
