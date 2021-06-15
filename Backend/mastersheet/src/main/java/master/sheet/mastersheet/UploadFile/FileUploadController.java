@@ -1,16 +1,21 @@
 package master.sheet.mastersheet.UploadFile;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.io.*;
+
 import java.util.*;
 
+import org.apache.poi.hssf.usermodel.*;
+// import org.apache.poi.ss.usermodel.CellType;
+import org.apache.poi.ss.usermodel.*;
+// import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.*;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.*;
 
+import jdk.incubator.vector.VectorOperators.Test;
 import master.sheet.mastersheet.UserController;
 import master.sheet.mastersheet.Auth.Auth;
 
@@ -47,8 +52,8 @@ public class FileUploadController {
                 return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
             }
         } catch (Exception e) {
+            System.out.println(e);
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-            
         }
     }
     public boolean upload_file(MultipartFile file) throws IOException{
@@ -58,6 +63,8 @@ public class FileUploadController {
         FileOutputStream fos = new FileOutputStream(myFile);
         fos.write(file.getBytes());
         fos.close();
+        // readFromExcel(file);
         return true;
     }
+
 }

@@ -1,5 +1,9 @@
 package master.sheet.mastersheet;
 import org.apache.commons.lang3.RandomStringUtils;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
@@ -9,6 +13,8 @@ import master.sheet.mastersheet.Auth.Auth;
 import master.sheet.mastersheet.User.User;
 
 import java.util.Base64;
+import java.io.File;
+import java.io.FileInputStream;
 import java.sql.*;
 
 @SpringBootApplication
@@ -112,10 +118,35 @@ public class MastersheetApplication {
                 return false;
             }
     }
+	public static void readFromExcel(){
+		try{
+		System.out.println("start");
+		FileInputStream fis = new FileInputStream(new File("README.txt"));
+		// System.out.println(fis.readAllBytes());
+		System.out.println("1");
+		Workbook wb;
+		wb = WorkbookFactory.create(new File("project.xlsx"));
+		System.out.println("2");
+		Sheet sh;
+		sh = wb.getSheet("Sheet1");
+		System.out.println("3");
+	int noOfRows = sh.getLastRowNum();
+	System.out.println("number of rows:"+noOfRows);
+	for(Row row:sh){
+		// System.out.println(row.getCell(0).getStringCellValue());
+	}
+	fis.close();
+	wb.close();
+		}
+		catch(Exception e){
+			System.out.println("Error:"+e);
+		}
+	}
 	public static void main(String[] args) {
 		createDatabase();
 		createUserTable();
 		printTable();
+		readFromExcel();
 		SpringApplication.run(MastersheetApplication.class, args);
 	}
 
