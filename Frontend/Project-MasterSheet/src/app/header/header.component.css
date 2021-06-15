@@ -1,0 +1,36 @@
+
+/*header */
+
+#logo{
+    width: 20%;
+    height: 10%;
+    margin: 0;
+}
+
+#website-name{
+    float: right;
+    margin-top: 3%;
+    margin-right: 4%;
+    font-family: 'Times New Roman', Times, serif;
+    font-weight: 500;
+    color: #492580;
+
+}
+header{
+    width:100% ;
+    height: auto;
+    border-style: outset;
+    line-height: 30%;
+    border: 1%;
+    padding: 0;
+    margin: 0; 
+     
+    
+}
+ p{
+     text-align: center;
+     font-size: 28px;
+     font-weight: 700;
+     color: #492580;
+     
+ }

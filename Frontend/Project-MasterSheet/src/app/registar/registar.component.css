@@ -3,9 +3,11 @@
     margin:0;
     padding:0;
     box-sizing:border-box;
+    
   }
   body {
-    background: #fbf3ff;
+    background:#fbf3ff;
+    
   } 
   .container {
     position: absolute;
@@ -15,6 +17,7 @@
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
+    
   } 
 
   .myLeftCtn {
@@ -122,7 +125,7 @@
 .myCard{
     background: linear-gradient(45deg, #492580, #e73c60);
     height: 180%;
-    padding-top: 60px;
+    padding-top: 60px;   
 }
 .myLeftCtn{
     background-color: linear-gradient(45deg, #492580, #e73c60);
@@ -147,8 +150,8 @@ select{
   margin-top: 10px;
   margin-bottom: 10px;
   border: none;
-  -webkit-box-shadow: 0px 10px 49px -14px rgba(0, 0, 0, 0.7);
-  -moz-box-shadow: 0px 10px 49px -14px rgba(0, 0, 0, 0.7);
-  box-shadow: 0px 10px 49px -14px rgba(0, 0, 0, 0.7);
+  -webkit-box-shadow: 0px 20px 89px -14px rgba(0, 0, 0, 0.9);
+  -moz-box-shadow: 0px 20px 89px -14px rgba(0, 0, 0, 0.9);
+  box-shadow: 0px 20px 89px -14px rgba(0, 0, 0, 0.9);
 }
 
