@@ -118,14 +118,13 @@ public class MastersheetApplication {
                 return false;
             }
     }
-	public static void readFromExcel(){
+	public static void readFromExcel(String filename){
 		try{
 		System.out.println("start");
-		FileInputStream fis = new FileInputStream(new File("README.txt"));
-		// System.out.println(fis.readAllBytes());
+
 		System.out.println("1");
 		Workbook wb;
-		wb = WorkbookFactory.create(new File("project.xlsx"));
+		wb = WorkbookFactory.create(new File(filename));
 		System.out.println("2");
 		Sheet sh;
 		sh = wb.getSheet("Sheet1");
@@ -135,7 +134,7 @@ public class MastersheetApplication {
 	for(Row row:sh){
 		// System.out.println(row.getCell(0).getStringCellValue());
 	}
-	fis.close();
+	// fis.close();
 	wb.close();
 		}
 		catch(Exception e){
@@ -146,7 +145,6 @@ public class MastersheetApplication {
 		createDatabase();
 		createUserTable();
 		printTable();
-		readFromExcel();
 		SpringApplication.run(MastersheetApplication.class, args);
 	}
 
