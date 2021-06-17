@@ -223,16 +223,6 @@ public class FileUploadController {
             }
         }
         }
-        // for project n (done)
-            // for item n
-                // check item related to project 
-                    // inside item
-                        // insert to database
-        //////////////////////////////////////////////////
-        // for item n
-            //get project
-            // insert into
-
         return false;
     }
     public static boolean insertMasterData(sheet sh){
@@ -248,6 +238,22 @@ public class FileUploadController {
             ,sh.getItem_id(),sh.getItem_name(),sh.getItem_type(),sh.getItem_start_date(),sh.getItem_end_date(),sh.getItem_remarks(),sh.getPo_no()
             ,sh.getPo_start_date(),sh.getPo_end_date(),sh.getPo_value(),sh.getProject_id(),sh.getProject_name(),sh.getProject_start_date(),sh.getProject_end_date()
             ,sh.getProject_remarks(),sh.getProject_manager(),sh.getProject_type(),sh.getProject_stauts(),sh.getPayment_value(),sh.getPayment_date());
+			stmt.executeUpdate(sql);
+			return true;
+		}catch(Exception e){
+			System.out.println(e);
+			return false;
+		}
+    }
+    public static boolean insertTask(task tas){
+        try{
+			Class.forName("org.mariadb.jdbc.Driver");  
+			Connection con=DriverManager.getConnection(  
+			"jdbc:mariadb://localhost:"+port+"/"+database,username,password);
+			Statement stmt = con.createStatement();
+			String sql = "INSERT INTO "+masterDataTable+" (task_id,item_id,task_description) "+
+			String.format("VALUES ('%s','%s','%s')"
+            ,tas.getTask_id(),tas.getItem_id(),tas.getTask_description());
 			stmt.executeUpdate(sql);
 			return true;
 		}catch(Exception e){

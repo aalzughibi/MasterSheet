@@ -133,8 +133,9 @@ public class MastersheetApplication {
 			Connection con=DriverManager.getConnection(  
 			"jdbc:mariadb://localhost:"+port+"/"+database+"?allowPublicKeyRetrieval=true&useSSL=false",username,password);
 			Statement stmt = con.createStatement();
+			// stmt.executeUpdate("DROP TABLE task");
 			if (!checkTable(taskTable)){
-				String sql = "CREATE TABLE "+taskTable+"(id int NOT NULL PRIMARY KEY AUTO_INCREMENT,item_id VARCHAR(255),task_description VARCHAR(255) NOT NULL, FOREIGN KEY (item_id) REFERENCES masterdata(item_id) ON UPDATE CASCADE ON DELETE RESTRICT)";
+				String sql = "CREATE TABLE "+taskTable+"(task_id int NOT NULL PRIMARY KEY AUTO_INCREMENT,item_id VARCHAR(255),task_description VARCHAR(255) NOT NULL, FOREIGN KEY (item_id) REFERENCES masterdata(item_id) ON UPDATE CASCADE ON DELETE RESTRICT)";
 				stmt.executeUpdate(sql); 
 				System.out.println("created successfully");
 			}
