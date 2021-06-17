@@ -48,14 +48,7 @@ table.table td a {
     margin: 0 5px;
 }
 
-table.table td a.edit {
-    color: #492580;
-    padding-right: 10px;
-}
-table.table td a.delete {
-    color: #e73c60;
-    padding-left: 10px;
-}
+
 table.table td i {
     font-size: 19px;
 }    
@@ -98,25 +91,61 @@ table.table td i {
     margin-top: 6px;
     font-size: 95%;
 } 
-.table-title .add-new {
-    float: right;
-    height: 40px;
+
+.searchInput{
+    float: left;
+    height: 52px;
     font-size: 18px;
     min-width: 200px;
     border-radius: 50px;
-    background: #492580;
+    background:#fff;
     color: #fff;
-    width: 270px;
+    width: 200px;
     border: none;
-    border-radius: 25px;
-    
+    border-radius: 25px;   
+    border:1px solid grey ;
+
+
+    border-top-left-radius: 50px;
+    border-bottom-left-radius: 50px;
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
 }
-.table-title .add-new:hover {
+.searchInput:focus {
+    /* border-radius: 25px; */
+    outline: none;
+    padding-left: 24px;
+    color: black;
+}
+
+.searchDiv{
+    display: table;
+    clear: both;
+}
+.searchDiv button{
+    float: right;
+    width: 15%;
+    padding: 10px;
+    background: #999;
+    color: white;
+    font-size: 20px;
+    border: 1px solid grey;
+    border-left: none;
+    cursor: pointer;
+    margin-right: 22px;
+    border-radius: 15px;
+    outline: none;
+
+    border-top-left-radius: 0px;
+    border-bottom-left-radius: 0px;
+    border-top-right-radius: 50px;
+    border-bottom-right-radius: 50px;
+}
+
+.searchDiv button:hover{
     background-color: #e73c60;
 }
-.table-title .add-new i {
-    margin-right: 4px;
-}
+
 
 .col-sm-8, .hint-text{
     color: #492580;
@@ -126,3 +155,24 @@ table.table td i {
 table{
     text-align: center;
 }
+.col-sm-4 {
+    padding-left: 90px;
+    
+}
+table.table td a {
+    color: #a0a5b1;
+    display: inline-block;
+    margin: 0 5px;
+}
+
+table.table td a.edit {
+    color: #492580;
+    padding-right: 10px;
+}
+table.table td a.delete {
+    color: #e73c60;
+    padding-left: 10px;
+}
+table.table td i {
+    font-size: 19px;
+} 

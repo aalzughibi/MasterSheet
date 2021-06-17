@@ -11,6 +11,10 @@ import { ResetPasswordComponent } from './reset-password/reset-password.componen
 import { UsersTableComponent } from './users-table/users-table.component';
 import { HeaderComponent } from './header/header.component';
 import { FooterComponent } from './footer/footer.component';
+import { MasterDataComponent } from './master-data/master-data.component';
+import { MasterDataItemComponent } from './master-data-item/master-data-item.component';
+import { MasterDataTaskComponent } from './master-data-task/master-data-task.component';
+import { MasterDataPoComponent } from './master-data-po/master-data-po.component';
 
 @NgModule({
   declarations: [
@@ -20,7 +24,11 @@ import { FooterComponent } from './footer/footer.component';
     ResetPasswordComponent,
     UsersTableComponent,
     HeaderComponent,
-    FooterComponent
+    FooterComponent,
+    MasterDataComponent,
+    MasterDataItemComponent,
+    MasterDataTaskComponent,
+    MasterDataPoComponent
   ],
   imports: [
     BrowserModule,
