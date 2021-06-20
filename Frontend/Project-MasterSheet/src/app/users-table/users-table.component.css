@@ -126,3 +126,12 @@ table.table td i {
 table{
     text-align: center;
 }
+.fa-plus {
+    color: white;
+}
+.register-text {
+    color: white;
+}
+.register-text:hover {
+    text-decoration: none;
+}
