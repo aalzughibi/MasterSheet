@@ -217,7 +217,7 @@ public class FileUploadController {
                         
                     }
                 }
-                // for suliman
+                // for sulaiman
             }
         } catch (Exception e) {
             System.out.println(e);
