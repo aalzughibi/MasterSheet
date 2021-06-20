@@ -8,13 +8,13 @@
 }
 
 #website-name{
+    position: relative;
     float: right;
-    margin-top: 3%;
+    margin-top: 2%;
     margin-right: 4%;
     font-family: 'Times New Roman', Times, serif;
     font-weight: 500;
     color: #492580;
-
 }
 header{
     width:100% ;
@@ -23,14 +23,37 @@ header{
     line-height: 30%;
     border: 1%;
     padding: 0;
-    margin: 0; 
-     
-    
+    margin: 0;    
 }
- p{
-     text-align: center;
-     font-size: 28px;
-     font-weight: 700;
-     color: #492580;
-     
- }
+li {
+    display: inline;
+    padding-left: 100px;
+    color: #492580;
+}
+.name {
+    font-size: 16px;
+    text-align: center;
+    font-weight: 200;
+    color: black;
+    padding-top: 10px;
+}
+.role {
+    font-weight: bold;
+}
+.fa-edit {
+    color: rgb(146, 146, 146);
+    float: right;
+    font-size: 19px;
+}
+.fa-sign-out {
+    color: rgb(146, 146, 146);
+    float: right;
+    font-size: 24px;
+}
+a {
+    color: #694899;
+    /* text-decoration: underline; */
+}
+b {
+    font: 900;
+}
