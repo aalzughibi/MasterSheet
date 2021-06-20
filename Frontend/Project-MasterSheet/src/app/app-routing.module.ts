@@ -3,6 +3,7 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { FooterComponent } from './footer/footer.component';
 import { HeaderComponent } from './header/header.component';
+import { HistoryComponent } from './history/history.component';
 import { LoginComponent } from './login/login.component';
 import { MasterDataItemComponent } from './master-data-item/master-data-item.component';
 import { MasterDataPoComponent } from './master-data-po/master-data-po.component';
@@ -25,6 +26,7 @@ const routes: Routes = [
   { path: 'master-data-item', component: MasterDataItemComponent }, 
   { path: 'master-data-task', component: MasterDataTaskComponent }, 
   { path: 'master-data-po', component: MasterDataPoComponent },  
+  { path: 'history', component: HistoryComponent },  
   { path: '**', redirectTo:'/login'  } // Wildcard Route
 ];
 

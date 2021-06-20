@@ -159,3 +159,24 @@ table{
     padding-left: 90px;
     
 }
+
+table.table td a.history {
+    color: #492580;
+    padding: 15px;
+}
+
+table.table td a {
+    color: #a0a5b1;
+    display: inline-block;
+    margin: 0 5px;
+}
+
+
+
+table.table td i {
+    font-size: 25px;
+} 
+
+table.table td a.history:hover {
+    color: #e73c60;
+}
