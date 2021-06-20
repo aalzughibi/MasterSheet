@@ -9,7 +9,7 @@ import { MasterDataItemComponent } from './master-data-item/master-data-item.com
 import { MasterDataPoComponent } from './master-data-po/master-data-po.component';
 import { MasterDataTaskComponent } from './master-data-task/master-data-task.component';
 import { MasterDataComponent } from './master-data/master-data.component';
-import { RegistarComponent } from './registar/registar.component';
+import { RegisterComponent } from './register/register.component';
 import { ResetPasswordComponent } from './reset-password/reset-password.component';
 import { UsersTableComponent } from './users-table/users-table.component';
 
@@ -17,7 +17,7 @@ import { UsersTableComponent } from './users-table/users-table.component';
 const routes: Routes = [
   { path: '', redirectTo: '/login', pathMatch: 'full' },
   { path: 'login', component: LoginComponent },
-  { path: 'registar', component: RegistarComponent }, 
+  { path: 'register', component: RegisterComponent }, 
   { path: 'reset-password', component: ResetPasswordComponent }, 
   { path: 'users-table', component: UsersTableComponent }, 
   { path: 'header', component: HeaderComponent }, 

@@ -4,7 +4,7 @@
     box-sizing:border-box;
   }
   body {
-    background: #fbf3ff;
+    background-color: #fbf3ff;
   } 
   .container {
     position: absolute;

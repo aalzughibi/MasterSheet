@@ -1,11 +1,21 @@
-
-
-     <!--logo with website name-->
-     <header>
-      <img id="logo" src="./assets/solLogo.png.png" alt="Solutions Logo">
-      <h2 id="website-name">Master Sheet</h2>
-
-
+<!--logo with website name-->
+  <header>
+    <img id="logo" src="./assets/solLogo.png.png" alt="Solutions Logo">
+      <li><a routerLink="/master-data" routerLinkActive="active">Home</a></li>
+      <li><a routerLink="/users-table" routerLinkActive="active">Users table</a></li>
+      <div class="dropdown">
+        <button id="dropdownMenuButton" class="dropbtn">Settings</button>
+        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="#694899" class="bi bi-caret-down-fill" viewBox="0 0 16 16">
+          <path d="M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z"/>
+        </svg>
+        <div class="dropdown-content">
+          <a routerLink="/login" routerLinkActive="active">Change Name</a>
+          <a routerLink="/login" routerLinkActive="active">Logout</a>
+        </div>
+      </div>
+      <h2 id="website-name">Master Sheet<br>
+      <p class="name">Sulaiman Alkadi<br>
+      <b class="role">(Admin)</b></p></h2>
   </header>
 
 
