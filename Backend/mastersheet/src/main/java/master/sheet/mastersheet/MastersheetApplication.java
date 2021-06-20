@@ -34,11 +34,18 @@ public class MastersheetApplication {
 			Connection con=DriverManager.getConnection(  
 			"jdbc:mariadb://localhost:"+port+"/"+database,username,password);
 			Statement stmt = con.createStatement();
-			ResultSet rs=stmt.executeQuery("select * from user");  
+			ResultSet rs=stmt.executeQuery("select * from masterdata");  
+			ResultSetMetaData rsMetaData = rs.getMetaData();
+			System.out.println("----------------------------------------------------------");
+			for(int i = 1; i<=rsMetaData.getColumnCount(); i++) {
+				System.out.println(rsMetaData.getColumnName(i));
+			}
+			System.out.println("----------------------------------------------------------");
 			while(rs.next())  
-			System.out.println(rs.getInt(1)+"  "+rs.getString(2)+"  "+rs.getString(3)+"  "+rs.getString(4)); 
+			System.out.println(rs.getString(1)+"  "+rs.getString(2)+"  "+rs.getString(3)+"  "+rs.getString(4)+"  "+rs.getString(5)+"  "+rs.getString(6)+"  "+rs.getString(7)+"  "+rs.getString(8)+"  "+rs.getString(9)+"  "+rs.getString(10)+"  "+rs.getString(11)+"  "+rs.getString(12)); 
 		}catch(Exception e){
 		System.out.println("System discover error.");
+		System.out.println(e);
 		}
  
 	}

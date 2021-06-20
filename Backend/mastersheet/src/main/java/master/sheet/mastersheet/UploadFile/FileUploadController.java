@@ -4,6 +4,7 @@ import master.sheet.mastersheet.SheetsModel.task;
 import java.io.*;
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.*;
 
@@ -74,6 +75,11 @@ public class FileUploadController {
                     for(Map.Entry<String,String> notf:not_found.entrySet()){
                         items.remove(notf.getKey());
                     }
+                    if(insertIntoMasterData(items,proFile,poFile,tasksFile))
+                    System.out.println("Add successfully");
+                    else 
+                    System.out.println("Fail to Add");
+                    
                     Map<String,Object> mp =new HashMap<>();
                     // insert to master sheet
                     mp.put("items", items);
@@ -193,6 +199,39 @@ public class FileUploadController {
 		}
         
 	}
+    public static boolean checkProjectChange(project pro){
+        
+        try {
+            Class.forName("org.mariadb.jdbc.Driver");  
+			Connection con=DriverManager.getConnection(  
+			"jdbc:mariadb://localhost:"+port+"/"+database,username,password);
+			Statement stmt = con.createStatement();
+            String sql = "select * from "+masterDataTable;
+            ResultSet rs = stmt.executeQuery(sql);
+            while(rs.next()){
+                if(rs.getString("project_id").equals(pro.getProject_id())){
+                    if(!rs.getString("project_name").equals(pro.getProject_name())){
+                        
+                    }
+                    if(!rs.getString("project_name").equals(pro.getProject_name())){
+                        
+                    }
+                }
+            }
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+        return false;
+    }
+    public static boolean checkItemChange(item pro){
+        return false;
+    }
+    public static boolean checkTaskChange(task pro){
+        return false;
+    }
+    public static boolean checkPoChange(po pro){
+        return false;
+    }
     // method to add to database
     public static boolean insertIntoMasterData(Map<String,Object> items,Map<String,Object> projects,Map<String,Object> pos,Map<String,Object> tasks){
         for(Map.Entry<String,Object> proj:projects.entrySet()){
@@ -207,8 +246,10 @@ public class FileUploadController {
                 sh.setItem_remarks(((item)item.getValue()).getItem_remarks());
                 sh.setPo_no(((item)item.getValue()).getPo_no());
                 sh.setPo_value(((item)item.getValue()).getPo_value());
-                sh.setPo_start_date(((po)pos.get(((item)item.getValue()).getPo_no())).getStart_date());
-                sh.setPo_end_date(((po)pos.get(((item)item.getValue()).getPo_no())).getEnd_date());
+                // (po)pos.get(((item)item.getValue()).getPo_no())).getStart_date()
+                sh.setPo_start_date("test");
+                // ((po)pos.get(((item)item.getValue()).getPo_no())).getEnd_date()
+                sh.setPo_end_date("test-end");
                 sh.setProject_id(((project)proj.getValue()).getProject_id());
                 sh.setProject_name(((project)proj.getValue()).getProject_name());
                 sh.setProject_start_date(((project)proj.getValue()).getStart_date());
@@ -219,11 +260,11 @@ public class FileUploadController {
                 sh.setProject_stauts(((project)proj.getValue()).getProject_status());
                 sh.setPayment_value("");
                 sh.setPayment_date("");
-                insertMasterData(sh);
+               insertMasterData(sh);
             }
         }
         }
-        return false;
+        return true;
     }
     public static boolean insertMasterData(sheet sh){
         try{
