@@ -13,6 +13,8 @@ import master.sheet.mastersheet.Auth.Auth;
 import master.sheet.mastersheet.User.User;
 
 import java.util.Base64;
+import java.util.HashMap;
+import java.util.Map;
 import java.io.File;
 import java.io.FileInputStream;
 import java.sql.*;
@@ -24,7 +26,8 @@ public class MastersheetApplication {
     public static String username = "root";
     public static String password = "1234";
 	public static String userTable = "user";
-	
+	public static String masterDataTable = "masterdata";
+	public static String taskTable = "task";
 	public static void printTable(){
 		try{
 			Class.forName("org.mariadb.jdbc.Driver");  
@@ -99,6 +102,51 @@ public class MastersheetApplication {
                 return false;
             }
 	}
+	public static boolean createMasterDataTable(){
+		try{  
+			Class.forName("org.mariadb.jdbc.Driver");  
+			Connection con=DriverManager.getConnection(  
+			"jdbc:mariadb://localhost:"+port+"/"+database+"?allowPublicKeyRetrieval=true&useSSL=false",username,password);
+			Statement stmt = con.createStatement();
+			// stmt.executeUpdate("DROP TABLE "+masterDataTable);
+			if (!checkTable(masterDataTable)){
+				String sql = "CREATE TABLE "+masterDataTable+"(item_id VARCHAR(255) NOT NULL PRIMARY KEY,item_name VARCHAR(255) NOT NULL,"+
+				"item_type VARCHAR(255) NOT NULL,item_start_date VARCHAR(255) NOT NULL,item_end_date VARCHAR(255) NOT NULL,item_remarks VARCHAR(255) NOT NULL,po_no VARCHAR(255) NOT NULL,"+
+				"po_start_date VARCHAR(255) NOT NULL,po_end_date VARCHAR(255) NOT NULL,po_value VARCHAR(255) NOT NULL,project_id VARCHAR(255) NOT NULL,project_name VARCHAR(255) NOT NULL,"+
+				"project_start_date VARCHAR(255) NOT NULL,project_end_date VARCHAR(255) NOT NULL,project_remarks VARCHAR(255) NOT NULL,project_manager VARCHAR(255) NOT NULL,"+
+				"project_type VARCHAR(255) NOT NULL,project_stauts VARCHAR(255) NOT NULL, payment_value VARCHAR(255) NOT NULL,payment_date VARCHAR(255) NOT NULL)";
+				stmt.executeUpdate(sql); 
+				System.out.println("created successfully");
+			}
+			con.close();  
+            return true;
+			}catch(Exception e){
+
+				System.out.println("Error Error Error Error Error Error Error Error Error Error Error Error Error Error Error Error Error Error Error Error ");
+				 System.out.println(e);
+                return false;
+            }
+	}
+	public static boolean createTaskTable(){
+		try{  
+			Class.forName("org.mariadb.jdbc.Driver");  
+			Connection con=DriverManager.getConnection(  
+			"jdbc:mariadb://localhost:"+port+"/"+database+"?allowPublicKeyRetrieval=true&useSSL=false",username,password);
+			Statement stmt = con.createStatement();
+			if (!checkTable(taskTable)){
+				String sql = "CREATE TABLE "+taskTable+"(id int NOT NULL PRIMARY KEY AUTO_INCREMENT,item_id VARCHAR(255),task_description VARCHAR(255) NOT NULL, FOREIGN KEY (item_id) REFERENCES masterdata(item_id) ON UPDATE CASCADE ON DELETE RESTRICT)";
+				stmt.executeUpdate(sql); 
+				System.out.println("created successfully");
+			}
+			con.close();  
+            return true;
+			}catch(Exception e){
+
+				System.out.println("Error Error Error Error Error Error Error Error Error Error Error Error Error Error Error Error Error Error Error Error ");
+				 System.out.println(e);
+                return false;
+            }
+	}
     public static boolean createDatabase(){
         try{  
 			Class.forName("org.mariadb.jdbc.Driver");  
@@ -118,35 +166,12 @@ public class MastersheetApplication {
                 return false;
             }
     }
-	public static void readFromExcel(){
-		try{
-		System.out.println("start");
-		FileInputStream fis = new FileInputStream(new File("README.txt"));
-		// System.out.println(fis.readAllBytes());
-		System.out.println("1");
-		Workbook wb;
-		wb = WorkbookFactory.create(new File("project.xlsx"));
-		System.out.println("2");
-		Sheet sh;
-		sh = wb.getSheet("Sheet1");
-		System.out.println("3");
-	int noOfRows = sh.getLastRowNum();
-	System.out.println("number of rows:"+noOfRows);
-	for(Row row:sh){
-		// System.out.println(row.getCell(0).getStringCellValue());
-	}
-	fis.close();
-	wb.close();
-		}
-		catch(Exception e){
-			System.out.println("Error:"+e);
-		}
-	}
 	public static void main(String[] args) {
 		createDatabase();
 		createUserTable();
 		printTable();
-		readFromExcel();
+		createMasterDataTable();
+		createTaskTable();
 		SpringApplication.run(MastersheetApplication.class, args);
 	}
 
