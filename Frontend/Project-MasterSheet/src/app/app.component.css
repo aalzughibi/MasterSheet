@@ -1,7 +1,8 @@
-*{
+/* *{
     margin:0;
     padding:0;
     box-sizing:border-box;
+    background-color: #fbf3ff;
   }
   body {
     background-color: #fbf3ff;
@@ -10,7 +11,7 @@
     position: absolute;
     max-width: 800px;
     height: 500px;
-    /* margin: auto; */
+    /* margin: auto; 
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
@@ -130,4 +131,5 @@
   }
   .form_group {
     display: inline-block;
-  }
+  } */
+

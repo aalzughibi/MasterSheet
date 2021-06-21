@@ -1,6 +1,10 @@
+
+*{
+    background-color: #fbf3ff;
+}
 body {
     color: #492580;
-    background: #f5f5f5;
+    background-color: #f5f5f5;
     font-family: 'Roboto', sans-serif;
     font-weight: 200;
     width: 100%;

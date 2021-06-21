@@ -14,8 +14,8 @@ import { MasterDataComponent } from './master-data/master-data.component';
 import { MasterDataItemComponent } from './master-data-item/master-data-item.component';
 import { MasterDataTaskComponent } from './master-data-task/master-data-task.component';
 import { MasterDataPoComponent } from './master-data-po/master-data-po.component';
-import { HistoryComponent } from './history/history.component';
 import { RegisterComponent } from './register/register.component';
+import { HistoryPageComponent } from './history-page/history-page.component';
 
 @NgModule({
   declarations: [
@@ -29,8 +29,9 @@ import { RegisterComponent } from './register/register.component';
     MasterDataItemComponent,
     MasterDataTaskComponent,
     MasterDataPoComponent,
-    HistoryComponent,
-    RegisterComponent
+  
+    RegisterComponent,
+    HistoryPageComponent
   ],
   imports: [
     BrowserModule,
