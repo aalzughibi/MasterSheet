@@ -1,12 +1,14 @@
 package master.sheet.mastersheet.User;
 
+import java.util.Date;
+
 public class User{
     private String username;
     private String email;
     private int role;
     private String first_name;
     private String last_name;
-    private String BirthDate;
+    private Date BirthDate;
     private String display_name;
     private int first_time;
     private String uid;
@@ -16,7 +18,7 @@ public class User{
         role=-1;
         first_name=" ";
         last_name = " ";
-        BirthDate=" ";
+        // BirthDate=" ";
         display_name=" ";
         first_time=-1;
         uid=" ";
@@ -102,14 +104,14 @@ public class User{
     /**
      * @return String return the BirthDate
      */
-    public String getBirthDate() {
+    public Date getBirthDate() {
         return BirthDate;
     }
 
     /**
      * @param BirthDate the BirthDate to set
      */
-    public void setBirthDate(String BirthDate) {
+    public void setBirthDate(Date BirthDate) {
         this.BirthDate = BirthDate;
     }
 

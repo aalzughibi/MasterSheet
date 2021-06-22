@@ -88,7 +88,7 @@ return jwt;
                 user.setLast_name(rs.getString(7));
                 user.setDisplay_name(rs.getString(8));
                 user.setUid(rs.getString(9));
-                user.setBirthDate(rs.getString(10));
+                user.setBirthDate(rs.getDate(10));
                 user.setFirst_time(rs.getInt(11));
 				return user;
 			}

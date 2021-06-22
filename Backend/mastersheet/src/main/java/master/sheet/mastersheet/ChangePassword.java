@@ -57,7 +57,7 @@ public class ChangePassword {
                     userTemp.setLast_name(rs.getString(7));
                     userTemp.setDisplay_name(rs.getString(8));
                     userTemp.setUid(rs.getString(9));
-                    userTemp.setBirthDate(rs.getString(10));
+                    userTemp.setBirthDate(rs.getDate(10));
                     userTemp.setFirst_time(rs.getInt(11));
                     con.close(); 
                     return userTemp;
