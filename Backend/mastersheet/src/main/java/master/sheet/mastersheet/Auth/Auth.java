@@ -17,7 +17,7 @@ public class Auth {
     public static String username = "root";
     public static String password = "1234";
     public static String userTable="user";
-    public  String setJWT(String subject,String uid,Object expired,String username){
+    public static  String setJWT(String subject,String uid,Object expired,String username){
 		try {
 			String secretkey="NovaIsbestWaterBrand";
 		
@@ -26,8 +26,6 @@ public class Auth {
 				.setSubject(subject)
 				.claim("userId", uid).claim("expired", expired).claim("username", username)
 				.signWith(SignatureAlgorithm.HS256,secretkey.getBytes()).compact();
-			System.out.println("jwtToken=");
-			System.out.println(jwtToken);
 			return jwtToken;
 		} catch (Exception e)
 		{

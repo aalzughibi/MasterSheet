@@ -1,6 +1,7 @@
 package master.sheet.mastersheet.UploadFile;
 
 import master.sheet.mastersheet.SheetsModel.task;
+import master.sheet.mastersheet.databaseHelper.databaseHelper;
 import master.sheet.mastersheet.excelHelper.excelHelper;
 
 import java.io.*;
@@ -18,14 +19,15 @@ import org.apache.poi.ss.usermodel.*;
 // import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.*;
 import org.json.JSONObject;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.*;
 
 import jdk.incubator.vector.VectorOperators.Test;
-import master.sheet.mastersheet.UserController;
 import master.sheet.mastersheet.Auth.Auth;
+import master.sheet.mastersheet.Service.UserSerivce;
 import master.sheet.mastersheet.SheetsModel.item;
 import master.sheet.mastersheet.SheetsModel.po;
 import master.sheet.mastersheet.SheetsModel.project;
@@ -34,18 +36,8 @@ import master.sheet.mastersheet.SheetsModel.sheet;
 @RestController
 @RequestMapping("UploadFile")
 public class FileUploadController {
-    public static String port = "3306";
-    public static String database = "mastersheetdatabase";
-    public static String username = "root";
-    public static String password = "";
-    public static String userTable = "user";
-    public static String masterDataTable = "masterdata";
-    public static String taskTable = "task";
-    public static String poTable = "po";
-    public static String projectTable = "project";
-    public static String itemTable = "item";
-    public static String logTable = "log";
-
+    @Autowired
+    UserSerivce service;
     @PostMapping()
     public ResponseEntity<Map<String, Object>> UploadFile(@RequestHeader("Authorization") String header_auth,
             @RequestParam("items") MultipartFile itemsfile, @RequestParam("po") MultipartFile pofile,
@@ -55,7 +47,7 @@ public class FileUploadController {
                 JSONObject jo = Auth.convert_JsonString_To_Json(Auth.getJWTToken(header_auth)[1]);
                 String usernameU = jo.getString("username");
                 System.out.println(jo.get("userId"));
-                if (UserController.isAdmin(String.valueOf(jo.get("userId")))) {
+                if (service.isAdmin(String.valueOf(jo.get("userId")))) {
                     System.out.println("Start At: " + new Date());
                     Map<String, Object> items = upload_file(itemsfile);
                     Map<String, String> not_found = new HashMap<>();
@@ -120,10 +112,10 @@ public class FileUploadController {
         // NULL,afterChange VARCHAR(255) NOT NULL)";
         try {
             Class.forName("org.mariadb.jdbc.Driver");
-            Connection con = DriverManager.getConnection("jdbc:mariadb://localhost:" + port + "/" + database, username,
-                    password);
+            Connection con = DriverManager.getConnection("jdbc:mariadb://localhost:" + databaseHelper.port + "/" + databaseHelper.database, databaseHelper.username,
+            databaseHelper.password);
             Statement stmt = con.createStatement();
-            String sql = "INSERT INTO " + logTable
+            String sql = "INSERT INTO " + databaseHelper.logTable
                     + " (username,colName,rowName,dateOfUpdate,beforeChange,afterChange) "
                     + String.format("VALUES ('%s','%s','%s','%s','%s','%s')", usernameU, colName, rowName,
                             dateOfUpdate.toString(), beforeChange, afterChange);
@@ -142,57 +134,57 @@ public class FileUploadController {
         try {
             String usernameUser = usernameU;
             Class.forName("org.mariadb.jdbc.Driver");
-            Connection con = DriverManager.getConnection("jdbc:mariadb://localhost:" + port + "/" + database, username,
-                    password);
+            Connection con = DriverManager.getConnection("jdbc:mariadb://localhost:" + databaseHelper.port + "/" + databaseHelper.database, databaseHelper.username,
+            databaseHelper.password);
             Statement stmt = con.createStatement();
-            String sql = "select * from " + projectTable + " where project_id='" + projects.getProject_id() + "'";
+            String sql = "select * from " + databaseHelper.projectTable + " where project_id='" + projects.getProject_id() + "'";
             ResultSet rs = stmt.executeQuery(sql);
             while (rs.next()) {
                 if (!rs.getString("project_name").equals(projects.getProject_name())) {
-                    stmt.execute("UPDATE " + projectTable + " SET project_name='" + projects.getProject_name()
+                    stmt.execute("UPDATE " + databaseHelper.projectTable + " SET project_name='" + projects.getProject_name()
                             + "' WHERE project_id='" + projects.getProject_id() + "'");
                     insertLog(usernameUser, "project_name", projects.getProject_id(), new Date(),
                             rs.getString("project_name"), projects.getProject_name());
                 }
-                if (!rs.getDate("project_start_date").equals(projects.getStart_date())) {
-                    stmt.execute("UPDATE " + projectTable + " SET project_start_date='" + projects.getStart_date()
+                if (!rs.getString("project_start_date").equals(projects.getStart_date().toString())) {
+                    stmt.execute("UPDATE " + databaseHelper.projectTable + " SET project_start_date='" + projects.getStart_date().toString()
                             + "' WHERE project_id='" + projects.getProject_id() + "'");
                     insertLog(usernameUser, "project_start_date", projects.getProject_id(), new Date(),
                             rs.getString("project_start_date").toString(), projects.getStart_date().toString());
                 }
-                if (!rs.getDate("project_end_date").equals(projects.getEnd_date())) {
-                    stmt.execute("UPDATE " + projectTable + " SET project_end_date='" + projects.getEnd_date()
+                if (!rs.getString("project_end_date").equals(projects.getEnd_date().toString())) {
+                    stmt.execute("UPDATE " + databaseHelper.projectTable + " SET project_end_date='" + projects.getEnd_date().toString()
                             + "' WHERE project_id='" + projects.getProject_id() + "'");
                     insertLog(usernameUser, "project_end_date", projects.getProject_id(), new Date(),
                             rs.getString("project_end_date").toString(), projects.getEnd_date().toString());
                 }
                 if (!rs.getString("project_remarks").equals(projects.getRemarks())) {
-                    stmt.execute("UPDATE " + projectTable + " SET project_remarks='" + projects.getRemarks()
+                    stmt.execute("UPDATE " + databaseHelper.projectTable + " SET project_remarks='" + projects.getRemarks()
                             + "' WHERE project_id='" + projects.getProject_id() + "'");
                     insertLog(usernameUser, "project_remarks", projects.getProject_id(), new Date(),
                             rs.getString("project_remarks"), projects.getRemarks());
                 }
                 if (!rs.getString("project_manager").equals(projects.getProject_manager())) {
-                    stmt.execute("UPDATE " + projectTable + " SET project_manager='" + projects.getProject_manager()
+                    stmt.execute("UPDATE " + databaseHelper.projectTable + " SET project_manager='" + projects.getProject_manager()
                             + "' WHERE project_id='" + projects.getProject_id() + "'");
                     insertLog(usernameUser, "project_manager", projects.getProject_id(), new Date(),
                             rs.getString("project_manager"), projects.getProject_manager());
                 }
                 if (!rs.getString("project_type").equals(projects.getProject_type())) {
-                    stmt.execute("UPDATE " + projectTable + " SET project_type='" + projects.getProject_type()
+                    stmt.execute("UPDATE " + databaseHelper.projectTable + " SET project_type='" + projects.getProject_type()
                             + "' WHERE project_id='" + projects.getProject_id() + "'");
                     insertLog(usernameUser, "project_type", projects.getProject_id(), new Date(),
                             rs.getString("project_type"), projects.getProject_type());
                 }
                 if (!rs.getString("project_stauts").equals(projects.getProject_status())) {
-                    stmt.execute("UPDATE " + projectTable + " SET project_stauts='" + projects.getProject_status()
+                    stmt.execute("UPDATE " + databaseHelper.projectTable + " SET project_stauts='" + projects.getProject_status()
                             + "' WHERE project_id='" + projects.getProject_id() + "'");
                     insertLog(usernameUser, "project_stauts", projects.getProject_id(), new Date(),
                             rs.getString("project_stauts"), projects.getProject_status());
                 }
                 if (!rs.getString("project_max_amount").equals(projects.getProject_max_amount())) {
                     stmt.execute(
-                            "UPDATE " + projectTable + " SET project_max_amount='" + projects.getProject_max_amount()
+                            "UPDATE " + databaseHelper.projectTable + " SET project_max_amount='" + projects.getProject_max_amount()
                                     + "' WHERE project_id='" + projects.getProject_id() + "'");
                     insertLog(usernameUser, "project_max_amount", projects.getProject_id(), new Date(),
                             rs.getString("project_max_amount"), projects.getProject_max_amount());
@@ -211,56 +203,56 @@ public class FileUploadController {
         try {
             String usernameUser = usernameU;
             Class.forName("org.mariadb.jdbc.Driver");
-            Connection con = DriverManager.getConnection("jdbc:mariadb://localhost:" + port + "/" + database, username,
-                    password);
+            Connection con = DriverManager.getConnection("jdbc:mariadb://localhost:" + databaseHelper.port + "/" + databaseHelper.database, databaseHelper.username,
+            databaseHelper.password);
             Statement stmt = con.createStatement();
-            String sql = "select * from " + itemTable + " where item_id='" + item.getItem_id() + "'";
+            String sql = "select * from " + databaseHelper.itemTable + " where item_id='" + item.getItem_id() + "'";
             ResultSet rs = stmt.executeQuery(sql);
             while (rs.next()) {
                 if (!rs.getString("item_name").equals(item.getItem_name())) {
-                    stmt.execute("UPDATE " + itemTable + " SET item_name='" + item.getItem_name() + "' WHERE item_id='"
+                    stmt.execute("UPDATE " + databaseHelper.itemTable + " SET item_name='" + item.getItem_name() + "' WHERE item_id='"
                             + item.getItem_id() + "'");
                     insertLog(usernameUser, "item_name", item.getItem_id(), new Date(), rs.getString("item_name"),
                             item.getItem_name());
                 }
                 if (!rs.getString("item_type").equals(item.getItem_type())) {
-                    stmt.execute("UPDATE " + itemTable + " SET item_type='" + item.getItem_type() + "' WHERE item_id='"
+                    stmt.execute("UPDATE " + databaseHelper.itemTable + " SET item_type='" + item.getItem_type() + "' WHERE item_id='"
                             + item.getItem_id() + "'");
                     insertLog(usernameUser, "item_type", item.getItem_id(), new Date(), rs.getString("item_type"),
                             item.getItem_type());
                 }
-                if (!rs.getDate("item_start_date").equals(item.getStart_date())) {
-                    stmt.execute("UPDATE " + itemTable + " SET item_start_date='" + item.getStart_date()
+                if (!rs.getString("item_start_date").equals(item.getStart_date().toString())) {
+                    stmt.execute("UPDATE " + databaseHelper.itemTable + " SET item_start_date='" + item.getStart_date().toString()
                             + "' WHERE item_id='" + item.getItem_id() + "'");
                     insertLog(usernameUser, "item_start_date", item.getItem_id(), new Date(),
                             rs.getString("item_start_date").toString(), item.getStart_date().toString());
                 }
-                if (!rs.getDate("item_end_date").equals(item.getEnd_date())) {
-                    stmt.execute("UPDATE " + itemTable + " SET item_end_date='" + item.getEnd_date()
+                if (!rs.getString("item_end_date").equals(item.getEnd_date().toString())) {
+                    stmt.execute("UPDATE " + databaseHelper.itemTable + " SET item_end_date='" + item.getEnd_date().toString()
                             + "' WHERE item_id='" + item.getItem_id() + "'");
                     insertLog(usernameUser, "item_end_date", item.getItem_id(), new Date(),
                             rs.getString("item_end_date").toString(), item.getEnd_date().toString());
                 }
                 if (!rs.getString("item_remarks").equals(item.getItem_remarks())) {
-                    stmt.execute("UPDATE " + itemTable + " SET item_remarks='" + item.getItem_remarks()
+                    stmt.execute("UPDATE " + databaseHelper.itemTable + " SET item_remarks='" + item.getItem_remarks()
                             + "' WHERE item_id='" + item.getItem_id() + "'");
                     insertLog(usernameUser, "item_remarks", item.getItem_id(), new Date(), rs.getString("item_remarks"),
                             item.getItem_remarks());
                 }
                 if (!rs.getString("po_no").equals(item.getPo_no())) {
-                    stmt.execute("UPDATE " + itemTable + " SET po_no='" + item.getPo_no() + "' WHERE item_id='"
+                    stmt.execute("UPDATE " + databaseHelper.itemTable + " SET po_no='" + item.getPo_no() + "' WHERE item_id='"
                             + item.getItem_id() + "'");
                     insertLog(usernameUser, "po_no", item.getItem_id(), new Date(), rs.getString("po_no"),
                             item.getPo_no());
                 }
                 if (!rs.getString("project_id").equals(item.getProject_id())) {
-                    stmt.execute("UPDATE " + itemTable + " SET project_id='" + item.getProject_id()
+                    stmt.execute("UPDATE " + databaseHelper.itemTable + " SET project_id='" + item.getProject_id()
                             + "' WHERE item_id='" + item.getItem_id() + "'");
                     insertLog(usernameUser, "project_id", item.getItem_id(), new Date(), rs.getString("project_id"),
                             item.getProject_id());
                 }
                 if (!rs.getString("po_value").equals(item.getPo_value())) {
-                    stmt.execute("UPDATE " + itemTable + " SET po_value='" + item.getPo_value() + "' WHERE item_id='"
+                    stmt.execute("UPDATE " + databaseHelper.itemTable + " SET po_value='" + item.getPo_value() + "' WHERE item_id='"
                             + item.getItem_id() + "'");
                     insertLog(usernameUser, "po_value", item.getItem_id(), new Date(), rs.getString("po_value"),
                             item.getPo_value());
@@ -281,20 +273,20 @@ public class FileUploadController {
         try {
             // task_id,item_id,task_description
             Class.forName("org.mariadb.jdbc.Driver");
-            Connection con = DriverManager.getConnection("jdbc:mariadb://localhost:" + port + "/" + database, username,
-                    password);
+            Connection con = DriverManager.getConnection("jdbc:mariadb://localhost:" + databaseHelper.port + "/" + databaseHelper.database, databaseHelper.username,
+            databaseHelper.password);
             Statement stmt = con.createStatement();
-            String sql = "select * from " + taskTable + " where task_id='" + task.getTask_id() + "'";
+            String sql = "select * from " + databaseHelper.taskTable + " where task_id='" + task.getTask_id() + "'";
             ResultSet rs = stmt.executeQuery(sql);
             while (rs.next()) {
                 if (!rs.getString("item_id").equals(task.getItem_id())) {
-                    stmt.execute("UPDATE " + taskTable + " SET item_id='" + task.getItem_id() + "' WHERE task_id='"
+                    stmt.execute("UPDATE " + databaseHelper.taskTable + " SET item_id='" + task.getItem_id() + "' WHERE task_id='"
                             + task.getTask_id() + "'");
                     insertLog(usernameUser, "item_id", task.getTask_id(), new Date(), rs.getString("item_id"),
                             task.getItem_id());
                 }
                 if (!rs.getString("task_description").equals(task.getTask_description())) {
-                    stmt.execute("UPDATE " + taskTable + " SET task_description='" + task.getTask_description()
+                    stmt.execute("UPDATE " + databaseHelper.taskTable + " SET task_description='" + task.getTask_description()
                             + "' WHERE task_id='" + task.getTask_id() + "'");
                     insertLog(usernameUser, "task_description", task.getTask_id(), new Date(),
                             rs.getString("task_description"), task.getTask_description());
@@ -312,26 +304,21 @@ public class FileUploadController {
     public static boolean check_and_update_po(po po, String usernameU) {
         String usernameUser = usernameU;
         try {
-            // id
-            // po_no
-            // po_start_date
-            // po_end_date
-            // task_id,item_id,task_description
             Class.forName("org.mariadb.jdbc.Driver");
-            Connection con = DriverManager.getConnection("jdbc:mariadb://localhost:" + port + "/" + database, username,
-                    password);
+            Connection con = DriverManager.getConnection("jdbc:mariadb://localhost:" + databaseHelper.port + "/" + databaseHelper.database, databaseHelper.username,
+            databaseHelper.password);
             Statement stmt = con.createStatement();
-            String sql = "select * from " + poTable + " where po_no='" + po.getPo_id() + "'";
+            String sql = "select * from " + databaseHelper.poTable + " where po_no='" + po.getPo_id() + "'";
             ResultSet rs = stmt.executeQuery(sql);
             while (rs.next()) {
-                if (!rs.getString("po_start_date").equals(po.getStart_date())) {
-                    stmt.execute("UPDATE " + poTable + " SET po_start_date='" + po.getStart_date() + "' WHERE po_no='"
+                if (!rs.getString("po_start_date").equals(po.getStart_date().toString())) {
+                    stmt.execute("UPDATE " + databaseHelper.poTable + " SET po_start_date='" + po.getStart_date().toString() + "' WHERE po_no='"
                             + po.getPo_id() + "'");
                     insertLog(usernameUser, "po_start_date", po.getPo_id(), new Date(),
                             rs.getString("po_start_date").toString(), po.getStart_date().toString());
                 }
-                if (!rs.getString("po_end_date").equals(po.getEnd_date())) {
-                    stmt.execute("UPDATE " + poTable + " SET po_end_date='" + po.getEnd_date() + "' WHERE po_no='"
+                if (!rs.getString("po_end_date").equals(po.getEnd_date().toString())) {
+                    stmt.execute("UPDATE " + databaseHelper.poTable + " SET po_end_date='" + po.getEnd_date().toString() + "' WHERE po_no='"
                             + po.getPo_id() + "'");
                     insertLog(usernameUser, "po_end_date", po.getPo_id(), new Date(),
                             rs.getString("po_end_date").toString(), po.getEnd_date().toString());
@@ -506,7 +493,7 @@ public class FileUploadController {
     public static boolean updateMasterSheetRow(String column, String condition, String newValue, Statement stmt) {
         try {
             stmt.executeUpdate(
-                    "UPDATE " + masterDataTable + " SET " + column + "='" + newValue + "' WHERE " + condition);
+                    "UPDATE " + databaseHelper.masterDataTable + " SET " + column + "='" + newValue + "' WHERE " + condition);
             System.out.println("updated : " + column);
             return true;
         } catch (Exception e) {
@@ -519,10 +506,10 @@ public class FileUploadController {
     public static boolean checkProjectExist(String project_id) {
         try {
             Class.forName("org.mariadb.jdbc.Driver");
-            Connection con = DriverManager.getConnection("jdbc:mariadb://localhost:" + port + "/" + database, username,
-                    password);
+            Connection con = DriverManager.getConnection("jdbc:mariadb://localhost:" + databaseHelper.port + "/" + databaseHelper.database, databaseHelper.username,
+            databaseHelper.password);
             Statement stmt = con.createStatement();
-            String sql = "select * from " + projectTable + " where project_id='" + project_id + "'";
+            String sql = "select * from " + databaseHelper.projectTable + " where project_id='" + project_id + "'";
             ResultSet rs = stmt.executeQuery(sql);
             stmt.close();
             con.close();
@@ -538,10 +525,10 @@ public class FileUploadController {
     public static boolean checkItemExist(String item_id) {
         try {
             Class.forName("org.mariadb.jdbc.Driver");
-            Connection con = DriverManager.getConnection("jdbc:mariadb://localhost:" + port + "/" + database, username,
-                    password);
+            Connection con = DriverManager.getConnection("jdbc:mariadb://localhost:" + databaseHelper.port + "/" + databaseHelper.database, databaseHelper.username,
+            databaseHelper.password);
             Statement stmt = con.createStatement();
-            String sql = "select * from " + itemTable + " where item_id='" + item_id + "'";
+            String sql = "select * from " + databaseHelper.itemTable + " where item_id='" + item_id + "'";
             ResultSet rs = stmt.executeQuery(sql);
             stmt.close();
             con.close();
@@ -557,10 +544,10 @@ public class FileUploadController {
     public static boolean checkPoExist(String po_no) {
         try {
             Class.forName("org.mariadb.jdbc.Driver");
-            Connection con = DriverManager.getConnection("jdbc:mariadb://localhost:" + port + "/" + database, username,
-                    password);
+            Connection con = DriverManager.getConnection("jdbc:mariadb://localhost:" + databaseHelper.port + "/" + databaseHelper.database, databaseHelper.username,
+            databaseHelper.password);
             Statement stmt = con.createStatement();
-            String sql = "select * from " + poTable + " where po_no='" + po_no + "'";
+            String sql = "select * from " + databaseHelper.poTable + " where po_no='" + po_no + "'";
             ResultSet rs = stmt.executeQuery(sql);
             stmt.close();
             con.close();
@@ -576,10 +563,10 @@ public class FileUploadController {
     public static boolean checktaskExist(String task_id) {
         try {
             Class.forName("org.mariadb.jdbc.Driver");
-            Connection con = DriverManager.getConnection("jdbc:mariadb://localhost:" + port + "/" + database, username,
-                    password);
+            Connection con = DriverManager.getConnection("jdbc:mariadb://localhost:" + databaseHelper.port + "/" + databaseHelper.database, databaseHelper.username,
+            databaseHelper.password);
             Statement stmt = con.createStatement();
-            String sql = "select * from " + taskTable + " where task_id='" + task_id + "'";
+            String sql = "select * from " + databaseHelper.taskTable + " where task_id='" + task_id + "'";
             ResultSet rs = stmt.executeQuery(sql);
             stmt.close();
             con.close();
@@ -595,8 +582,8 @@ public class FileUploadController {
     public static boolean insertIntoProject(project pro) {
         try {
             Class.forName("org.mariadb.jdbc.Driver");
-            Connection con = DriverManager.getConnection("jdbc:mariadb://localhost:" + port + "/" + database, username,
-                    password);
+            Connection con = DriverManager.getConnection("jdbc:mariadb://localhost:" + databaseHelper.port + "/" + databaseHelper.database, databaseHelper.username,
+            databaseHelper.password);
             Statement stmt = con.createStatement();
             // new SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
             // .format(new Timestamp(pro.getStart_date().getTime()))
@@ -605,7 +592,7 @@ public class FileUploadController {
             // System.out.println(
             // new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new
             // Timestamp(pro.getStart_date().getTime())));
-            String sql = "INSERT INTO " + projectTable
+            String sql = "INSERT INTO " + databaseHelper.projectTable
                     + " (project_id,project_name,project_start_date,project_end_date,project_remarks,project_manager,project_type,"
                     + "project_stauts,project_max_amount,payment_value,payment_date) "
                     + String.format("VALUES ('%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s')",
@@ -625,10 +612,10 @@ public class FileUploadController {
     public static boolean insertIntoItem(item ite) {
         try {
             Class.forName("org.mariadb.jdbc.Driver");
-            Connection con = DriverManager.getConnection("jdbc:mariadb://localhost:" + port + "/" + database, username,
-                    password);
+            Connection con = DriverManager.getConnection("jdbc:mariadb://localhost:" + databaseHelper.port + "/" + databaseHelper.database, databaseHelper.username,
+            databaseHelper.password);
             Statement stmt = con.createStatement();
-            String sql = "INSERT INTO " + itemTable
+            String sql = "INSERT INTO " + databaseHelper.itemTable
                     + " (item_id,item_name,item_type,item_start_date,item_end_date,item_remarks,po_no,"
                     + "po_value,project_id,payment_value,payment_date) "
                     + String.format("VALUES ('%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s')", ite.getItem_id(),
@@ -649,11 +636,11 @@ public class FileUploadController {
         try {
             Class.forName("org.mariadb.jdbc.Driver");
             Connection con = DriverManager.getConnection(
-                    "jdbc:mariadb://localhost:" + port + "/" + database + "?allowPublicKeyRetrieval=true&useSSL=false",
-                    username, password);
+                    "jdbc:mariadb://localhost:" + databaseHelper.port + "/" + databaseHelper.database + "?allowPublicKeyRetrieval=true&useSSL=false",
+                    databaseHelper.username, databaseHelper.password);
             // new Timestamp(po.getStart_date().getTime())
             Statement stmt = con.createStatement();
-            String sql = "INSERT INTO " + poTable + " (po_no,po_start_date,po_end_date) "
+            String sql = "INSERT INTO " + databaseHelper.poTable + " (po_no,po_start_date,po_end_date) "
                     + String.format("VALUES ('%s','%s','%s')", po.getPo_id(), po.getStart_date().toString(),
                             po.getEnd_date().toString());
             stmt.executeUpdate(sql);
@@ -665,38 +652,13 @@ public class FileUploadController {
             return false;
         }
     }
-
-    // public static boolean insertMasterData(sheet sh){
-    // try{
-    // Class.forName("org.mariadb.jdbc.Driver");
-    // Connection con=DriverManager.getConnection(
-    // "jdbc:mariadb://localhost:"+port+"/"+database,username,password);
-    // Statement stmt = con.createStatement();
-    // String sql = "INSERT INTO "+masterDataTable+"
-    // (item_id,item_name,item_type,item_start_date,item_end_date,item_remarks,po_no,"+
-    // "po_start_date,po_end_date,po_value,project_id,project_name,project_start_date,project_end_date,project_remarks,project_manager,project_type,"+
-    // "project_stauts,payment_value,payment_date) "+
-    // String.format("VALUES
-    // ('%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s')"
-    // ,sh.getItem_id(),sh.getItem_name(),sh.getItem_type(),sh.getItem_start_date(),sh.getItem_end_date(),sh.getItem_remarks(),sh.getPo_no()
-    // ,sh.getPo_start_date(),sh.getPo_end_date(),sh.getPo_value(),sh.getProject_id(),sh.getProject_name(),sh.getProject_start_date(),sh.getProject_end_date()
-    // ,sh.getProject_remarks(),sh.getProject_manager(),sh.getProject_type(),sh.getProject_stauts(),sh.getPayment_value(),sh.getPayment_date());
-    // stmt.executeUpdate(sql);
-    // stmt.close();
-    // con.close();
-    // return true;
-    // }catch(Exception e){
-    // System.out.println(e);
-    // return false;
-    // }
-    // }
     public static boolean insertTask(task tas) {
         try {
             Class.forName("org.mariadb.jdbc.Driver");
-            Connection con = DriverManager.getConnection("jdbc:mariadb://localhost:" + port + "/" + database, username,
-                    password);
+            Connection con = DriverManager.getConnection("jdbc:mariadb://localhost:" + databaseHelper.port + "/" + databaseHelper.database, databaseHelper.username,
+            databaseHelper.password);
             Statement stmt = con.createStatement();
-            String sql = "INSERT INTO " + taskTable + " (task_id,item_id,task_description) " + String
+            String sql = "INSERT INTO " + databaseHelper.taskTable + " (task_id,item_id,task_description) " + String
                     .format("VALUES ('%s','%s','%s')", tas.getTask_id(), tas.getItem_id(), tas.getTask_description());
             stmt.executeUpdate(sql);
             stmt.close();
