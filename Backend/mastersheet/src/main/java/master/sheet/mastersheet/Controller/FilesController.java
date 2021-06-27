@@ -79,57 +79,59 @@ public class FilesController {
                 items.remove(notf.getKey());
             }
             if (insertIntoMasterData(items, proFile, poFile, tasksFile))
-            System.out.println("Add successfully");
-        else
-            System.out.println("Fail to Add");
+                System.out.println("Add successfully");
+            else
+                System.out.println("Fail to Add");
             return new ResponseEntity<>(HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
-    public  boolean insertIntoMasterData(Map<String, Object> items, Map<String, Object> projects,
-    Map<String, Object> pos, Map<String, Object> tasks) throws Exception {
-System.out.println("start at:" + new Date());
-// excelHelper.wrtieExcelFile(projects, items, pos, tasks);
-for (Map.Entry<String, Object> proj : projects.entrySet()) {
-    if (!projectService.isExist(proj.getKey())) {
-        ProjectEntity pe = ((ProjectEntity) proj.getValue());
-        projectService.insertProject(pe);
-    } else {
 
-        projectService.updateProject(((ProjectEntity) proj.getValue()));
-    }
-}
-for (Map.Entry<String, Object> proj : items.entrySet()) {
-    if (!itemService.isExist(proj.getKey())) {
-        ItemEntity ie = ((ItemEntity) proj.getValue());
-        itemService.insertItem(ie);
-    } else {
+    public boolean insertIntoMasterData(Map<String, Object> items, Map<String, Object> projects,
+            Map<String, Object> pos, Map<String, Object> tasks) throws Exception {
+        System.out.println("start at:" + new Date());
+        // excelHelper.wrtieExcelFile(projects, items, pos, tasks);
+        for (Map.Entry<String, Object> proj : projects.entrySet()) {
+            if (!projectService.isExist(proj.getKey())) {
+                ProjectEntity pe = ((ProjectEntity) proj.getValue());
+                projectService.insertProject(pe);
+            } else {
 
-        itemService.updateItem(((ItemEntity) proj.getValue()));
+                projectService.updateProject(((ProjectEntity) proj.getValue()));
+            }
+        }
+        for (Map.Entry<String, Object> proj : items.entrySet()) {
+            if (!itemService.isExist(proj.getKey())) {
+                ItemEntity ie = ((ItemEntity) proj.getValue());
+                itemService.insertItem(ie);
+            } else {
+
+                itemService.updateItem(((ItemEntity) proj.getValue()));
+            }
+        }
+        for (Map.Entry<String, Object> proj : pos.entrySet()) {
+            if (!poService.isExist(proj.getKey())) {
+                PoEntity pe = ((PoEntity) proj.getValue());
+                poService.insertPo(pe);
+            } else {
+                // if updated or not and updated
+                poService.updatePo(((PoEntity) proj.getValue()));
+            }
+        }
+        for (Map.Entry<String, Object> proj : tasks.entrySet()) {
+            if (!taskService.isExist(proj.getKey())) {
+                TaskEntity te = ((TaskEntity) proj.getValue());
+                taskService.insertTask(te);
+            } else {
+                taskService.updateTask(((TaskEntity) proj.getValue()));
+                System.out.println("isExist - Task");
+            }
+        }
+        System.out.println("end at:" + new Date());
+        return true;
     }
-}
-for (Map.Entry<String, Object> proj : pos.entrySet()) {
-    if (!poService.isExist(proj.getKey())) {
-        PoEntity pe = ((PoEntity) proj.getValue());
-        poService.insertPo(pe);
-    } else {
-        // if updated or not and updated
-        poService.updatePo(((PoEntity) proj.getValue()));
-    }
-}
-for (Map.Entry<String, Object> proj : tasks.entrySet()) {
-    if (!taskService.isExist(proj.getKey())) {
-        TaskEntity te = ((TaskEntity) proj.getValue());
-        taskService.insertTask(te);
-    } else {
-        taskService.updateTask(((TaskEntity) proj.getValue()));
-        System.out.println("isExist - Task");
-    }
-}
-System.out.println("end at:" + new Date());
-return true;
-}
+
     public boolean isItem(Map<String, Object> items, String item_id) {
         if (items == null || item_id == null)
             return false;
@@ -151,13 +153,16 @@ return true;
         fos.close();
         return excelHelper.readFromExcel(file.getOriginalFilename());
     }
-@GetMapping("/download")
-public ResponseEntity<?> DownloadFile(){
-try{
-    excelHelper.wrtieExcelFile(project, item, po, task);
-    return new ResponseEntity<>(HttpStatus.OK);
-}catch(Exception e){
-return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-}
-}
+
+    @GetMapping("/download")
+    public ResponseEntity<?> downloadFile() {
+        try {
+            excelHelper.wrtieExcelFile(projectService.getAllProjects(), itemService.getAllItems(),
+                    poService.getAllPos(), taskService.getAllTasks());
+            return new ResponseEntity<>(HttpStatus.OK);
+        } catch (Exception e) {
+            System.out.println(e);
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+    }
 }

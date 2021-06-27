@@ -25,10 +25,6 @@ import master.sheet.mastersheet.Entity.ItemEntity;
 import master.sheet.mastersheet.Entity.PoEntity;
 import master.sheet.mastersheet.Entity.ProjectEntity;
 import master.sheet.mastersheet.Entity.TaskEntity;
-import master.sheet.mastersheet.SheetsModel.item;
-import master.sheet.mastersheet.SheetsModel.po;
-import master.sheet.mastersheet.SheetsModel.project;
-import master.sheet.mastersheet.SheetsModel.task;
 
 public class excelHelper {
     public static Map<String, Object> readFromExcel(String filename) {
@@ -125,74 +121,96 @@ public class excelHelper {
         }
 
     }
-    // Map<String,project> project,Map<String,item> item,Map<String,po> po,Map<String,task> task
-    public static void wrtieExcelFile(List<ProjectEntity> project, List<ItemEntity> item,List<PoEntity> po,List<TaskEntity> task){
-        XSSFWorkbook workbook = new XSSFWorkbook(); 
-         XSSFSheet sheet = workbook.createSheet("MasterSheet");
-            Map<String,Object[]> data = new TreeMap<String,Object[]>();
-            // set data in tree
-            // for project
-                // for item
-                    // for task
-                    data.put("1",new Object[]{"item id ","item name","item type","item start date",
-                    "item end date","item remarks","po no","po start date","po end date","po value","project id",
-                    "project name","project start date","project end date","project remarks","project manager",
-                    "project type","project stauts","tasks list"});
-                    // for(Map.Entry<String,Object> proj:project.entrySet()){
-                    //     for(Map.Entry<String,Object> ite:item.entrySet()){
-                    //         if(ite.getKey().equals(proj.getKey())){
-                    //             String tasklist="";
-                    //             for(Map.Entry<String,Object> taskk:task.entrySet()){
-                    //                 if(((task)taskk.getValue()).getItem_id()==ite.getKey()){
-                    //                     tasklist+=((task)taskk.getValue()).getTask_id()+"-"+((task)taskk.getValue()).getTask_description()+"\n\r";
-                    //                 }
-                    //             }
-                    //             item it = ((item)ite.getValue());
-                    //             po p = ((po)po.get(it.getPo_no()));
-                    //             project projj = ((project)proj.getValue());
-                    //             data.put(it.getItem_id(),new Object[]{it.getItem_id(),it.getItem_name(),it.getItem_type(),it.getStart_date()
-                    //                 ,it.getEnd_date(),it.getItem_remarks(),it.getPo_no(),p.getStart_date(),p.getEnd_date(),
-                    //                 it.getPo_value(),it.getProject_id(),projj.getProject_name(),projj.getStart_date(),
-                    //                 projj.getEnd_date(),projj.getRemarks(),projj.getProject_manager(),projj.getProject_type(),tasklist});
-                    //         }
-                            
-                    //     }
-                    // }
-                    // ///////////////// //////////////////
-                    // for(ProjectEntity pe: project){
-                    //     for(ItemEntity ie:item){
-                    //         if()
-                    //     }
-                    // }
-            // data.put("1", new Object[]{"id","name","lastname"});
-            // data.put("2", new Object[]{1,"Khaled","Mohammed"});
-            // data.put("2ss", new Object[]{1,"Khaled","Mohammed"});
-            Set<String> keyset = data.keySet();
-            int rownum=0;
-            for (String key : keyset)
-            {
-                Row row = sheet.createRow(rownum++);
-                Object [] objArr = data.get(key);
-                int cellnum = 0;
-                for (Object obj : objArr)
-                {
-                   Cell cell = row.createCell(cellnum++);
-                //    cell.setCellValue((String)obj);
-                   if(obj instanceof String)
-                        cell.setCellValue((String)obj);
-                    else if(obj instanceof Integer)
-                        cell.setCellValue((Integer)obj);
+
+    // Map<String,project> project,Map<String,item> item,Map<String,po>
+    // po,Map<String,task> task
+    public static void wrtieExcelFile(List<ProjectEntity> project, List<ItemEntity> item, List<PoEntity> po,
+            List<TaskEntity> task) {
+        XSSFWorkbook workbook = new XSSFWorkbook();
+        XSSFSheet sheet = workbook.createSheet("MasterSheet");
+        Map<String, Object[]> data = new TreeMap<String, Object[]>();
+        // set data in tree
+        // for project
+        // for item
+        // for task
+        data.put("1",
+                new Object[] { "item id ", "item name", "item type", "item start date", "item end date", "item remarks",
+                        "po no", "po start date", "po end date", "po value", "project id", "project name",
+                        "project start date", "project end date", "project remarks", "project manager", "project type",
+                        "project stauts", "tasks list" });
+        // for(Map.Entry<String,Object> proj:project.entrySet()){
+        // for(Map.Entry<String,Object> ite:item.entrySet()){
+        // if(ite.getKey().equals(proj.getKey())){
+        // String tasklist="";
+        // for(Map.Entry<String,Object> taskk:task.entrySet()){
+        // if(((task)taskk.getValue()).getItem_id()==ite.getKey()){
+        // tasklist+=((task)taskk.getValue()).getTask_id()+"-"+((task)taskk.getValue()).getTask_description()+"\n\r";
+        // }
+        // }
+        // item it = ((item)ite.getValue());
+        // po p = ((po)po.get(it.getPo_no()));
+        // project projj = ((project)proj.getValue());
+        // data.put(it.getItem_id(),new
+        // Object[]{it.getItem_id(),it.getItem_name(),it.getItem_type(),it.getStart_date()
+        // ,it.getEnd_date(),it.getItem_remarks(),it.getPo_no(),p.getStart_date(),p.getEnd_date(),
+        // it.getPo_value(),it.getProject_id(),projj.getProject_name(),projj.getStart_date(),
+        // projj.getEnd_date(),projj.getRemarks(),projj.getProject_manager(),projj.getProject_type(),tasklist});
+        // }
+
+        // }
+        // }
+        // ///////////////// //////////////////
+        for (ProjectEntity pe : project) {
+            for (ItemEntity ie : item) {
+                if (ie.getItem_id().equals(pe.getProject_id())) {
+                    String tasklist = "";
+                    for (TaskEntity te : task) {
+                        if (te.getItem_id().equals(ie.getItem_id()))
+                            tasklist += te.getTask_id() + "-" + te.getTask_description() + "\n\r";
+                    }
+                    PoEntity poE = new PoEntity();
+                    for (PoEntity poee : po) {
+                        if (poee.equals(ie.getPo_no())) {
+                            poE = poee;
+                            break;
+                        }
+                    }
+
+                    data.put(ie.getItem_id(),
+                            new Object[] { ie.getItem_id(), ie.getItem_name(), ie.getItem_type(), ie.getStart_date(),
+                                    ie.getEnd_date(), ie.getItem_remarks(), ie.getPo_no(), poE.getStart_date(),
+                                    poE.getEnd_date(), ie.getPo_value(), ie.getProject_id(), pe.getProject_name(),
+                                    pe.getStart_date(), pe.getEnd_date(), pe.getRemarks(), pe.getProject_manager(),
+                                    pe.getProject_type(), tasklist });
                 }
             }
-            try {
-                FileOutputStream out = new FileOutputStream(new File("testDemo1.xlsx"));
-                workbook.write(out);
-                out.close();
-                System.out.println("Done");
-            } catch (Exception e) {
-                System.out.println(e);
-                //TODO: handle exception
-            }
+        }
+        // data.put("1", new Object[]{"id","name","lastname"});
+        // data.put("2", new Object[]{1,"Khaled","Mohammed"});
+        // data.put("2ss", new Object[]{1,"Khaled","Mohammed"});
+        Set<String> keyset = data.keySet();
+        int rownum = 0;
+        for (String key : keyset) {
+            Row row = sheet.createRow(rownum++);
+            Object[] objArr = data.get(key);
+            int cellnum = 0;
+            for (Object obj : objArr) {
+                Cell cell = row.createCell(cellnum++);
+                // cell.setCellValue((String)obj);
+                if (obj instanceof String)
+                    cell.setCellValue((String) obj);
+                else if (obj instanceof Integer)
+                    cell.setCellValue((Integer) obj);
             }
         }
-
+        try {
+            FileOutputStream out = new FileOutputStream(new File("testDemo1.xlsx"));
+            workbook.write(out);
+            out.close();
+            System.out.println("Done");
+        } catch (Exception e) {
+            System.out.println(e);
+            // TODO: handle exception
+        }
+    }
+}
