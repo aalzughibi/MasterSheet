@@ -1,13 +1,7 @@
 package master.sheet.mastersheet.Controller;
 
 import java.io.*;
-import java.text.SimpleDateFormat;
 import java.util.*;
-
-import org.apache.poi.ss.usermodel.DataFormatter;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,7 +17,7 @@ import master.sheet.mastersheet.Service.ItemService;
 import master.sheet.mastersheet.Service.PoService;
 import master.sheet.mastersheet.Service.ProjectService;
 import master.sheet.mastersheet.Service.TaskService;
-import master.sheet.mastersheet.SheetsModel.project;
+import master.sheet.mastersheet.excelHelper.excelHelper;
 
 @RestController
 @RequestMapping("file")
@@ -91,7 +85,6 @@ public class FilesController {
             return new ResponseEntity<>(HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-            // TODO: handle exception
         }
     }
     public  boolean insertIntoMasterData(Map<String, Object> items, Map<String, Object> projects,
@@ -124,7 +117,6 @@ for (Map.Entry<String, Object> proj : pos.entrySet()) {
         // if updated or not and updated
         poService.updatePo(((PoEntity) proj.getValue()));
     }
-
 }
 for (Map.Entry<String, Object> proj : tasks.entrySet()) {
     if (!taskService.isExist(proj.getKey())) {
@@ -134,7 +126,6 @@ for (Map.Entry<String, Object> proj : tasks.entrySet()) {
         taskService.updateTask(((TaskEntity) proj.getValue()));
         System.out.println("isExist - Task");
     }
-
 }
 System.out.println("end at:" + new Date());
 return true;
@@ -158,101 +149,15 @@ return true;
         FileOutputStream fos = new FileOutputStream(myFile);
         fos.write(file.getBytes());
         fos.close();
-        return readFromExcel(file.getOriginalFilename());
+        return excelHelper.readFromExcel(file.getOriginalFilename());
     }
-
-    public static Map<String, Object> readFromExcel(String filename) {
-        Map<String, Object> data = new HashMap<>();
-        try {
-            System.out.println("start");
-            Workbook wb;
-            wb = WorkbookFactory.create(new File(filename));
-            Sheet sh;
-            sh = wb.getSheet("Sheet1");
-            int noOfRows = sh.getLastRowNum() + 1;
-            System.out.println("number of rows " + filename + ":" + noOfRows);
-            // items.xlsx
-            // po.xlsx
-            // project.xlsx
-            // tasks.xlsx
-            DataFormatter formatter = new DataFormatter();
-            switch (filename) {
-                case "items.xlsx":
-                    for (int i = 1; i < noOfRows; i++) {
-
-                        ItemEntity items = new ItemEntity();
-                        // Timestamp ts = new Timestamp();
-                        items.setItem_id(formatter.formatCellValue(sh.getRow(i).getCell(0)));
-                        items.setProject_id(formatter.formatCellValue(sh.getRow(i).getCell(1)));
-                        items.setItem_name(formatter.formatCellValue(sh.getRow(i).getCell(2)));
-                        items.setItem_remarks(formatter.formatCellValue(sh.getRow(i).getCell(3)));
-                        items.setItem_type(formatter.formatCellValue(sh.getRow(i).getCell(4)));
-                        // items.setStart_date(formatter.formatCellValue(sh.getRow(i).getCell(5)));
-                        // new
-                        // SimpleDateFormat("MM/dd/yyyy").parse(formatter.formatCellValue(sh.getRow(i).getCell(5)))
-                        items.setStart_date(new SimpleDateFormat("MM/dd/yyyy")
-                                .parse(formatter.formatCellValue(sh.getRow(i).getCell(5))));
-                        items.setEnd_date(new SimpleDateFormat("MM/dd/yyyy")
-                                .parse(formatter.formatCellValue(sh.getRow(i).getCell(6))));
-                        items.setPo_remarks(formatter.formatCellValue(sh.getRow(i).getCell(7)));
-                        items.setPo_no(formatter.formatCellValue(sh.getRow(i).getCell(8)));
-                        items.setPo_value(formatter.formatCellValue(sh.getRow(i).getCell(9)));
-                        data.put(formatter.formatCellValue(sh.getRow(i).getCell(0)), items);
-                    }
-                    System.out.println("data: " + data.toString());
-                    return data;
-                // break;
-                case "po.xlsx":
-                    for (int i = 1; i < noOfRows; i++) {
-                        PoEntity p = new PoEntity();
-                        p.setPo_id(formatter.formatCellValue(sh.getRow(i).getCell(0)));
-                        p.setStart_date(new SimpleDateFormat("MM/dd/yyyy")
-                                .parse(formatter.formatCellValue(sh.getRow(i).getCell(1))));
-                        p.setEnd_date(new SimpleDateFormat("MM/dd/yyyy")
-                                .parse(formatter.formatCellValue(sh.getRow(i).getCell(2))));
-                        data.put(formatter.formatCellValue(sh.getRow(i).getCell(0)), p);
-                    }
-                    return data;
-                // break;
-                case "project.xlsx":
-                    for (int i = 1; i < noOfRows; i++) {
-                        if (formatter.formatCellValue(sh.getRow(i).getCell(0)) != "") {
-                            // System.out.println(formatter.formatCellValue(sh.getRow(i).getCell(0)));
-                            ProjectEntity project = new ProjectEntity();
-                            project.setProject_id(formatter.formatCellValue(sh.getRow(i).getCell(0)));
-                            project.setProject_name(formatter.formatCellValue(sh.getRow(i).getCell(1)));
-                            project.setStart_date(new SimpleDateFormat("MM/dd/yyyy")
-                                    .parse(formatter.formatCellValue(sh.getRow(i).getCell(2))));
-                            project.setEnd_date(new SimpleDateFormat("MM/dd/yyyy")
-                                    .parse(formatter.formatCellValue(sh.getRow(i).getCell(3))));
-                            project.setRemarks(formatter.formatCellValue(sh.getRow(i).getCell(4)));
-                            project.setProject_manager(formatter.formatCellValue(sh.getRow(i).getCell(5)));
-                            project.setProject_max_amount(formatter.formatCellValue(sh.getRow(i).getCell(6)));
-                            project.setProject_type(formatter.formatCellValue(sh.getRow(i).getCell(7)));
-                            project.setProject_status(formatter.formatCellValue(sh.getRow(i).getCell(8)));
-                            data.put(formatter.formatCellValue(sh.getRow(i).getCell(0)), project);
-                        }
-
-                    }
-                    return data;
-                // break;
-                case "tasks.xlsx":
-                    for (int i = 1; i < noOfRows; i++) {
-                        TaskEntity ta = new TaskEntity();
-                        ta.setTask_id(formatter.formatCellValue(sh.getRow(i).getCell(0)));
-                        ta.setItem_id(formatter.formatCellValue(sh.getRow(i).getCell(1)));
-                        ta.setTask_description(formatter.formatCellValue(sh.getRow(i).getCell(2)));
-                        data.put(formatter.formatCellValue(sh.getRow(i).getCell(0)), ta);
-                    }
-                    return data;
-                // break;
-            }
-            wb.close();
-            return data;
-        } catch (Exception e) {
-            System.out.println("Error:" + e);
-            return data;
-        }
-
-    }
+@GetMapping("/download")
+public ResponseEntity<?> DownloadFile(){
+try{
+    excelHelper.wrtieExcelFile(project, item, po, task);
+    return new ResponseEntity<>(HttpStatus.OK);
+}catch(Exception e){
+return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+}
+}
 }
