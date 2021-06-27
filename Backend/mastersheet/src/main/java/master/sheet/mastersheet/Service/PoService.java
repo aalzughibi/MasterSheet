@@ -1,6 +1,7 @@
 package master.sheet.mastersheet.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -17,12 +18,8 @@ public class PoService {
         return PoList;
     }
     public PoEntity getPoById(String po_id)throws Exception{
-        List<PoEntity> PoList = getAllPos();
-        for(PoEntity ul:PoList){
-            if(ul.getPo_id().equals(po_id))
-                return ul;
-        }
-        throw new Exception("Po not Found");
+        Optional<PoEntity> PoList = poReposiory.findByPoId(po_id);
+        return PoList.get();
     }
     public PoEntity updatePo(PoEntity Po)throws Exception{
         PoEntity pe = getPoById(Po.getPo_id());
@@ -38,5 +35,8 @@ public class PoService {
     public PoEntity insertPo(PoEntity Po){
        PoEntity pe= poReposiory.save(Po);
         return pe;
+    }
+    public boolean isExist(String po_id){
+        return poReposiory.existsByPoId(po_id);
     }
 }

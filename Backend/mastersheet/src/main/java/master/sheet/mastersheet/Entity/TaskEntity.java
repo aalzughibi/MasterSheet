@@ -10,7 +10,7 @@ public class TaskEntity implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @Column(name = "task_id",unique = true,nullable=false)
-    private String task_id;
+    private String taskId;
     @Column(name = "item_id")
     private String item_id;
     @Column(name = "task_description")
@@ -34,14 +34,14 @@ public class TaskEntity implements Serializable {
      * @return String return the task_id
      */
     public String getTask_id() {
-        return task_id;
+        return taskId;
     }
 
     /**
      * @param task_id the task_id to set
      */
     public void setTask_id(String task_id) {
-        this.task_id = task_id;
+        this.taskId = task_id;
     }
 
     /**

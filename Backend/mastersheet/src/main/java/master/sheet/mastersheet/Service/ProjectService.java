@@ -1,6 +1,7 @@
 package master.sheet.mastersheet.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -17,12 +18,8 @@ public class ProjectService {
     return projectList;
 }
 public ProjectEntity getProjectById(String project_id)throws Exception{
-    List<ProjectEntity> projectList = getAllProjects();
-    for(ProjectEntity ul:projectList){
-        if(ul.getProject_id().equals(project_id))
-            return ul;
-    }
-    throw new Exception("project not Found");
+    Optional<ProjectEntity> projectList = projectRepository.findByProjectId(project_id);
+    return projectList.get();
 }
 public ProjectEntity updateProject(ProjectEntity project)throws Exception{
     ProjectEntity pe = getProjectById(project.getProject_id());
@@ -44,5 +41,8 @@ public ProjectEntity updateProject(ProjectEntity project)throws Exception{
 public ProjectEntity insertProject(ProjectEntity project){
    ProjectEntity pe= projectRepository.save(project);
     return pe;
+}
+public boolean isExist(String project_id){
+    return projectRepository.existsByProjectId(project_id);
 }
 }

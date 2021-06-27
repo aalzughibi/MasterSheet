@@ -55,6 +55,7 @@ public class UserController {
     @GetMapping
     public ResponseEntity<?> getAllUsers(){
         try{
+            System.out.println(service.isExist("IxzgcDjkjrh2amWTASpsqJR6JezYs1FDzzjWaCB5"));
             return new ResponseEntity<>(service.getAllUsers(),HttpStatus.OK);
         }catch(Exception e){
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);

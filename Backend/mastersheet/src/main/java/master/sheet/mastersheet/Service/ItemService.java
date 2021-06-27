@@ -2,6 +2,7 @@ package master.sheet.mastersheet.Service;
 
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -18,12 +19,8 @@ public class ItemService {
         return ItemList;
     }
     public ItemEntity getItemById(String item_id)throws Exception{
-        List<ItemEntity> ItemList = getAllItems();
-        for(ItemEntity ul:ItemList){
-            if(ul.getItem_id().equals(item_id))
-                return ul;
-        }
-        throw new Exception("Item not Found");
+        Optional<ItemEntity> ItemList = itemRepository.findByItemId(item_id);
+        return ItemList.get();
     }
     public ItemEntity updateItem(ItemEntity Item)throws Exception{
         ItemEntity pe = getItemById(Item.getItem_id());
@@ -46,5 +43,8 @@ public class ItemService {
     public ItemEntity insertItem(ItemEntity Item){
        ItemEntity pe= itemRepository.save(Item);
         return pe;
+    }
+    public boolean isExist(String item_id){
+        return itemRepository.existsByItemId(item_id);
     }
 }

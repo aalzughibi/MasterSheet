@@ -11,7 +11,7 @@ public class ItemEntity implements Serializable{
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @Column(name = "item_id",unique = true,nullable=false)
-    private String item_id;
+    private String itemId;
     @Column(name = "item_type")
     private String item_type;
     @Column(name = "item_name")
@@ -54,14 +54,14 @@ public class ItemEntity implements Serializable{
      * @return String return the item_id
      */
     public String getItem_id() {
-        return item_id;
+        return itemId;
     }
 
     /**
      * @param item_id the item_id to set
      */
     public void setItem_id(String item_id) {
-        this.item_id = item_id;
+        this.itemId = item_id;
     }
 
     /**

@@ -11,7 +11,7 @@ public class ProjectEntity implements Serializable{
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @Column(name="project_id",unique = true,nullable=false)
-    private String project_id;
+    private String projectId;
     @Column(name="project_name",unique = false,nullable=false)
     private String project_name;
     @Column(name="start_date")
@@ -49,14 +49,14 @@ public class ProjectEntity implements Serializable{
      * @return String return the project_id
      */
     public String getProject_id() {
-        return project_id;
+        return projectId;
     }
 
     /**
      * @param project_id the project_id to set
      */
     public void setProject_id(String project_id) {
-        this.project_id = project_id;
+        this.projectId = project_id;
     }
 
     /**

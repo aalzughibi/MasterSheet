@@ -11,7 +11,7 @@ public class PoEntity implements Serializable{
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @Column(name = "po_id",unique = true,nullable=false)
-    private String po_id;
+    private String poId;
     @Column(name = "start_date")
     @Temporal(TemporalType.DATE)
     private Date start_date;
@@ -38,14 +38,14 @@ public class PoEntity implements Serializable{
      * @return String return the po_id
      */
     public String getPo_id() {
-        return po_id;
+        return poId;
     }
 
     /**
      * @param po_id the po_id to set
      */
     public void setPo_id(String po_id) {
-        this.po_id = po_id;
+        this.poId = po_id;
     }
 
     /**

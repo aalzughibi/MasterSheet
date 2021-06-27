@@ -1,6 +1,7 @@
 package master.sheet.mastersheet.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -18,12 +19,8 @@ public class TaskService {
         return TaskList;
     }
     public TaskEntity getTaskById(String Task_id)throws Exception{
-        List<TaskEntity> TaskList = getAllTasks();
-        for(TaskEntity ul:TaskList){
-            if(ul.getTask_id().equals(Task_id))
-                return ul;
-        }
-        throw new Exception("Task not Found");
+        Optional<TaskEntity> TaskList = taskRepository.findByTaskId(Task_id);
+        return TaskList.get();
     }
     public TaskEntity updateTask(TaskEntity Task)throws Exception{
         TaskEntity pe = getTaskById(Task.getTask_id());
@@ -39,5 +36,8 @@ public class TaskService {
     public TaskEntity insertTask(TaskEntity Task){
        TaskEntity pe= taskRepository.save(Task);
         return pe;
+    }
+    public boolean isExist(String task_id){
+        return taskRepository.existsByTaskId(task_id);
     }
 }

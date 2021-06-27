@@ -90,4 +90,7 @@ public class UserSerivce {
         }
         return null;
     }
+    public boolean isExist(String uid){
+        return userRepository.existsByUid(uid);
+    }
 }
