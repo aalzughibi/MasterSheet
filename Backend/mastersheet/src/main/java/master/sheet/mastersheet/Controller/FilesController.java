@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import master.sheet.mastersheet.Auth.Auth;
 import master.sheet.mastersheet.Entity.ItemEntity;
 import master.sheet.mastersheet.Entity.PoEntity;
 import master.sheet.mastersheet.Entity.ProjectEntity;
@@ -17,6 +18,7 @@ import master.sheet.mastersheet.Service.ItemService;
 import master.sheet.mastersheet.Service.PoService;
 import master.sheet.mastersheet.Service.ProjectService;
 import master.sheet.mastersheet.Service.TaskService;
+import master.sheet.mastersheet.Service.UserSerivce;
 import master.sheet.mastersheet.excelHelper.excelHelper;
 
 @RestController
@@ -30,11 +32,14 @@ public class FilesController {
     PoService poService;
     @Autowired
     TaskService taskService;
-
+    @Autowired
+    UserSerivce userService;
     // uploadfile and insert to database
     @PostMapping("/upload")
-    public ResponseEntity<?> uploadFiles(@RequestParam("Files") MultipartFile[] files) {
+    public ResponseEntity<?> uploadFiles(@RequestHeader("Authorization") String header_jwt,@RequestParam("Files") MultipartFile[] files) {
         try {
+            if(!Auth.isAdmin(userService,header_jwt))
+                return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
             Map<String, Object> items = new HashMap<>();
             Map<String, String> not_found = new HashMap<>();
             Map<String, Object> poFile = new HashMap<>();
@@ -146,20 +151,24 @@ public class FilesController {
 
     public Map<String, Object> upload_file(MultipartFile file) throws IOException {
         // FILE_DIRECTORY+
-        File myFile = new File(file.getOriginalFilename());
-        myFile.createNewFile();
-        FileOutputStream fos = new FileOutputStream(myFile);
-        fos.write(file.getBytes());
-        fos.close();
+        // File myFile = new File(file.getOriginalFilename());
+        // myFile.createNewFile();
+        // FileOutputStream fos = new FileOutputStream(myFile);
+        // fos.write(file.getBytes());
+        // fos.close();
         return excelHelper.readFromExcel(file.getOriginalFilename());
     }
 
     @GetMapping("/download")
-    public ResponseEntity<?> downloadFile() {
+    public ResponseEntity<?> downloadFile(@RequestHeader("Authorization") String header_jwt) {
         try {
+            if(Auth.isAdmin(userService,header_jwt)){
             excelHelper.wrtieExcelFile(projectService.getAllProjects(), itemService.getAllItems(),
                     poService.getAllPos(), taskService.getAllTasks());
             return new ResponseEntity<>(HttpStatus.OK);
+        }else
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+
         } catch (Exception e) {
             System.out.println(e);
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);

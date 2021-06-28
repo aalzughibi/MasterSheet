@@ -1,37 +1,16 @@
 package master.sheet.mastersheet;
-
-import org.apache.commons.lang3.RandomStringUtils;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.ss.usermodel.WorkbookFactory;
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
-import org.hibernate.cfg.Configuration;
+import org.apache.poi.hpsf.Date;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.context.annotation.Bean;
-import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.mail.javamail.JavaMailSenderImpl;
 
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
 import master.sheet.mastersheet.Auth.Auth;
-import master.sheet.mastersheet.SheetsModel.item;
-import master.sheet.mastersheet.SheetsModel.po;
 import master.sheet.mastersheet.databaseHelper.databaseHelper;
-import master.sheet.mastersheet.excelHelper.excelHelper;
-
-import java.util.Base64;
-import java.util.HashMap;
-import java.util.Map;
+import java.sql.*;
 import java.util.Properties;
 
-// import com.mysql.cj.xdevapi.SessionFactory;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.sql.*;
+import javax.mail.*;
+import javax.mail.internet.*;
 
 @SpringBootApplication
 public class MastersheetApplication {
@@ -336,19 +315,37 @@ public class MastersheetApplication {
 		
 	// 	return mailSender;
 	// }
-	public static void main(String[] args) {
-		// createDatabase();
-		// createUserTable();
-		// printTable();
-		// // createMasterDataTable();
-		// createTaskTable();
-		// createLogTable();
-		// createProjectTable();
-		// createPoTable();
-		// createItemTable();
-		// excelHelper.wrtieExcelFile();
-		// sysout
+	public static void sendMail() throws MessagingException{
+		Properties props = new Properties();
+		props.put("mail.smtp.auth", "true");
+		props.put("mail.smtp.starttls.enable", "true");
+		props.put("mail.smtp.host", "smtp.gmail.com");
+		props.put("mail.smtp.port", "587");
+		Session session = Session.getInstance(props, new javax.mail.Authenticator() {
+			protected PasswordAuthentication getPasswordAuthentication() {
+			   return new PasswordAuthentication("mrabdullah0102@gmail.com", "A0s3c7k8");
+			}
+		 });
+		 Message msg = new MimeMessage(session);
+   msg.setFrom(new InternetAddress("mrabdullah0102@gmail.com", false));
 
+   msg.setRecipients(Message.RecipientType.TO, InternetAddress.parse("mrabdullah0102@gmail.com"));
+   msg.setSubject("Tutorials point email");
+   msg.setContent("Tutorials point email", "text/html");
+
+   MimeBodyPart messageBodyPart = new MimeBodyPart();
+   messageBodyPart.setContent("Tutorials point email", "text/html");
+   Transport.send(msg);
+	}
+	public static void main(String[] args) {
+		try {
+			System.out.println("Start");
+			sendMail();
+		} catch (Exception e) {
+			System.out.println("Error : "+e);
+			//TODO: handle exception
+		}
+		
 		SpringApplication.run(MastersheetApplication.class, args);
 	}
 

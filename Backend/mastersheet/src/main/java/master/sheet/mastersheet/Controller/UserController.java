@@ -53,10 +53,13 @@ public class UserController {
     // [GET] all users from database
     // url: /users
     @GetMapping
-    public ResponseEntity<?> getAllUsers(){
+    public ResponseEntity<?> getAllUsers(@RequestHeader("Authorization") String header_jwt){
         try{
-            System.out.println(service.isExist("IxzgcDjkjrh2amWTASpsqJR6JezYs1FDzzjWaCB5"));
-            return new ResponseEntity<>(service.getAllUsers(),HttpStatus.OK);
+            if(Auth.isAdmin(service,header_jwt))
+                return new ResponseEntity<>(service.getAllUsers(),HttpStatus.OK);
+            else
+                return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+
         }catch(Exception e){
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
@@ -64,8 +67,11 @@ public class UserController {
     // [GET] user by userId from database
     // url: /users/{userId}
     @GetMapping(path = "/{userId}")
-    public ResponseEntity<?> getUSerByUID(@PathVariable String userId){
+    public ResponseEntity<?> getUserByUID(@RequestHeader("Authorization") String header_jwt, @PathVariable String userId){
         try {
+            if(!Auth.isAdmin(service,header_jwt))
+                return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+
             UserEntity ue = service.getUserByUID(userId);
             return new ResponseEntity<>(ue,HttpStatus.OK);
         } catch (Exception e) {
@@ -90,9 +96,12 @@ public class UserController {
 
     */
     @PostMapping()
-    public ResponseEntity<?> postUser(@RequestBody UserEntity entity) {
+    public ResponseEntity<?> postUser(@RequestHeader("Authorization") String header_jwt, @RequestBody UserEntity entity) {
         //TODO: process POST request
         try {
+            if(!Auth.isAdmin(service,header_jwt))
+                return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+
             if (Validate.isValidUsername(entity.getUsername())
                             && (EmailValidator.getInstance().isValid(entity.getEmail()))
                             && Validate.isValidFirstName(entity.getFirst_name())
@@ -115,8 +124,10 @@ public class UserController {
     // [PUT] update user if exist in database
     // url: /users/{userId}
     @PutMapping(path = "/{userId}")
-    public ResponseEntity<?> updateUser(@RequestBody UserEntity entity,@PathVariable String userId){
+    public ResponseEntity<?> updateUser(@RequestHeader("Authorization") String header_jwt,@RequestBody UserEntity entity,@PathVariable String userId){
     try{
+        if(!Auth.isAdmin(service,header_jwt))
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         entity.setUid(userId);
         UserEntity ue = service.updateUser(entity);
         return new ResponseEntity<>(HttpStatus.OK);
@@ -127,8 +138,10 @@ public class UserController {
     // [PUT] update display name in database
     // url: /users/display_name/{userId}
     @PutMapping(path="/display_name/{userId}")
-    public ResponseEntity<?> updateDisplayName(@RequestBody UserEntity entity,@PathVariable String userId){
+    public ResponseEntity<?> updateDisplayName(@RequestHeader("Authorization") String header_jwt,@RequestBody UserEntity entity,@PathVariable String userId){
         try{
+            if(!Auth.isAuthenticated(service,header_jwt))
+                return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
             entity.setUid(userId);
             UserEntity ue = service.updateDisplayName(entity);
             return new ResponseEntity<>(HttpStatus.OK);
@@ -137,8 +150,10 @@ public class UserController {
         }
     }
     @PutMapping(path="/password/{userId}")
-    public ResponseEntity<?> updatePassword(@RequestBody UserEntity entity,@PathVariable String userId){
+    public ResponseEntity<?> updatePassword(@RequestHeader("Authorization") String header_jwt,@RequestBody UserEntity entity,@PathVariable String userId){
         try {
+            if(!Auth.isAuthenticated(service,header_jwt))
+                return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
             entity.setUid(userId);
             UserEntity ue = service.updatePassword(entity);
             return new ResponseEntity<>(HttpStatus.OK);

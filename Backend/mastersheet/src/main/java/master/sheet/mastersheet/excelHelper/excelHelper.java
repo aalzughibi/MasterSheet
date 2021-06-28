@@ -138,28 +138,6 @@ public class excelHelper {
                         "po no", "po start date", "po end date", "po value", "project id", "project name",
                         "project start date", "project end date", "project remarks", "project manager", "project type",
                         "project stauts", "tasks list" });
-        // for(Map.Entry<String,Object> proj:project.entrySet()){
-        // for(Map.Entry<String,Object> ite:item.entrySet()){
-        // if(ite.getKey().equals(proj.getKey())){
-        // String tasklist="";
-        // for(Map.Entry<String,Object> taskk:task.entrySet()){
-        // if(((task)taskk.getValue()).getItem_id()==ite.getKey()){
-        // tasklist+=((task)taskk.getValue()).getTask_id()+"-"+((task)taskk.getValue()).getTask_description()+"\n\r";
-        // }
-        // }
-        // item it = ((item)ite.getValue());
-        // po p = ((po)po.get(it.getPo_no()));
-        // project projj = ((project)proj.getValue());
-        // data.put(it.getItem_id(),new
-        // Object[]{it.getItem_id(),it.getItem_name(),it.getItem_type(),it.getStart_date()
-        // ,it.getEnd_date(),it.getItem_remarks(),it.getPo_no(),p.getStart_date(),p.getEnd_date(),
-        // it.getPo_value(),it.getProject_id(),projj.getProject_name(),projj.getStart_date(),
-        // projj.getEnd_date(),projj.getRemarks(),projj.getProject_manager(),projj.getProject_type(),tasklist});
-        // }
-
-        // }
-        // }
-        // ///////////////// //////////////////
         for (ProjectEntity pe : project) {
             for (ItemEntity ie : item) {
                 if (ie.getItem_id().equals(pe.getProject_id())) {
@@ -170,24 +148,21 @@ public class excelHelper {
                     }
                     PoEntity poE = new PoEntity();
                     for (PoEntity poee : po) {
-                        if (poee.equals(ie.getPo_no())) {
+                        if (poee.getPo_id().equals(ie.getPo_no())) {
                             poE = poee;
                             break;
                         }
                     }
-
+                    System.out.println(poE.getPo_id()+" "+poE.getStart_date());
                     data.put(ie.getItem_id(),
-                            new Object[] { ie.getItem_id(), ie.getItem_name(), ie.getItem_type(), ie.getStart_date(),
-                                    ie.getEnd_date(), ie.getItem_remarks(), ie.getPo_no(), poE.getStart_date(),
-                                    poE.getEnd_date(), ie.getPo_value(), ie.getProject_id(), pe.getProject_name(),
-                                    pe.getStart_date(), pe.getEnd_date(), pe.getRemarks(), pe.getProject_manager(),
+                            new Object[] { ie.getItem_id(), ie.getItem_name(), ie.getItem_type(), ie.getStart_date().toString(),
+                                    ie.getEnd_date().toString(), ie.getItem_remarks(), ie.getPo_no(), poE.getStart_date().toString(),
+                                    poE.getEnd_date().toString(), ie.getPo_value(), ie.getProject_id(), pe.getProject_name(),
+                                    pe.getStart_date().toString(), pe.getEnd_date().toString(), pe.getRemarks(), pe.getProject_manager(),
                                     pe.getProject_type(), tasklist });
                 }
             }
         }
-        // data.put("1", new Object[]{"id","name","lastname"});
-        // data.put("2", new Object[]{1,"Khaled","Mohammed"});
-        // data.put("2ss", new Object[]{1,"Khaled","Mohammed"});
         Set<String> keyset = data.keySet();
         int rownum = 0;
         for (String key : keyset) {
@@ -207,8 +182,10 @@ public class excelHelper {
             FileOutputStream out = new FileOutputStream(new File("testDemo1.xlsx"));
             workbook.write(out);
             out.close();
+            workbook.close();
             System.out.println("Done");
         } catch (Exception e) {
+            // workbook.close();
             System.out.println(e);
             // TODO: handle exception
         }

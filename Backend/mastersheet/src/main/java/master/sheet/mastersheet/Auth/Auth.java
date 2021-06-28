@@ -6,10 +6,12 @@ import java.util.HashMap;
 
 import org.json.JSONObject;
 import org.json.JSONException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.json.JacksonJsonParser;
 
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import master.sheet.mastersheet.Service.UserSerivce;
 
 public class Auth {
 	public static String port = "3306";
@@ -46,26 +48,50 @@ return jwt;
     public static JSONObject convert_JsonString_To_Json(String jsonString){
         return new JSONObject(jsonString);
     }
-	public static boolean isAdmin(String uid){
+    public static boolean isAuthenticated(UserSerivce userSerivce,String jwtToken){
         try{
-			Class.forName("org.mariadb.jdbc.Driver");  
-			Connection con=DriverManager.getConnection(  
-			"jdbc:mariadb://localhost:"+port+"/"+database+"?allowPublicKeyRetrieval=true&useSSL=false",username,password);
-			Statement stmt = con.createStatement();
-            String sql = "select * from " +userTable + " where uid='"+uid+"'";
-            ResultSet rs=stmt.executeQuery(sql); 
-            rs.next();
-            // if (rs.rs.getInt(5)==0)
-            return rs.getInt(5)==0?true:false;
+            if(validJWT(jwtToken)){
+               String payload = getJWTToken(jwtToken)[1];
+               JSONObject payloadJSON = convert_JsonString_To_Json(payload);
+                if(userSerivce.isExist(payloadJSON.getString("userId")))
+                    return true;                
+                return false; 
+            }
+            return false;
         }catch(Exception e){
+            System.out.println(e);
+            return false;
+        }
+    }
+    public static boolean isAdmin(UserSerivce userSerivce,String jwtToken){
+        try{
+            if(validJWT(jwtToken)){
+               String payload = getJWTToken(jwtToken)[1];
+               JSONObject payloadJSON = convert_JsonString_To_Json(payload);
+               System.out.println(payloadJSON.getString("userId"));
+                if(userSerivce.isExist(payloadJSON.getString("userId")))
+                    if(userSerivce.isAdmin(payloadJSON.getString("userId"))){
+                    System.out.println(true);
+                        return true;      
+                    }
+                    else          
+                        return false;
+                else
+                    return false; 
+            }
+            return false;
+        }catch(Exception e){
+            System.out.println(e);
             return false;
         }
     }
     public static boolean validJWT(String jwt){
         try{
             String[] jwtArr = getJWTToken(jwt);
-            String payload = jwtArr[1];
-            JSONObject jsonObject = new JSONObject(payload);
+            // String payload = jwtArr[1];
+            JSONObject jsonObject1 = new JSONObject(jwtArr[0]);
+            JSONObject jsonObject2 = new JSONObject(jwtArr[1]);
+            // JSONObject jsonObject3 = new JSONObject(jwtArr[2]);
             return true;
         }catch(Exception e){
             System.out.println("JWT_ERROR JWT_ERROR JWT_ERROR JWT_ERROR JWT_ERROR JWT_ERROR JWT_ERROR JWT_ERROR ");
