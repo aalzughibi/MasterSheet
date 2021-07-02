@@ -1,8 +1,12 @@
 package master.sheet.mastersheet.Auth;
 
-import java.sql.*;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
+// import java.sql.*;
 import java.util.Base64;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.TimeZone;
 
 import org.json.JSONObject;
 import org.json.JSONException;
@@ -19,21 +23,17 @@ public class Auth {
     public static String username = "root";
     public static String password = "1234";
     public static String userTable="user";
-    public static  String setJWT(String subject,String uid,Object expired,String username){
-		try {
+    public static  String setJWT(String subject,String uid,long expired,String username){
+
 			String secretkey="NovaIsbestWaterBrand";
 		
 			//The JWT signature algorithm we will be using to sign the token
 			String jwtToken = Jwts.builder()
 				.setSubject(subject)
-				.claim("userId", uid).claim("expired", expired).claim("username", username)
+				.claim("userId", uid).claim("exp", expired).claim("username", username)
 				.signWith(SignatureAlgorithm.HS256,secretkey.getBytes()).compact();
 			return jwtToken;
-		} catch (Exception e)
-		{
-			System.out.println(e.getMessage());
-			return "Error";
-		}
+	
 	}
 	public static String[] getJWTToken(String token){
 	// Decode JWT
@@ -89,8 +89,15 @@ return jwt;
         try{
             String[] jwtArr = getJWTToken(jwt);
             // String payload = jwtArr[1];
-            JSONObject jsonObject1 = new JSONObject(jwtArr[0]);
-            JSONObject jsonObject2 = new JSONObject(jwtArr[1]);
+            JSONObject header = new JSONObject(jwtArr[0]);
+            JSONObject payload = new JSONObject(jwtArr[1]);
+            // payload.getLong("exp");
+            long expiredDate = payload.getLong("exp");
+            long nowDate = LocalDateTime.now().toEpochSecond(ZoneOffset.UTC);
+
+            if(expiredDate<nowDate)
+                return false;
+            
             // JSONObject jsonObject3 = new JSONObject(jwtArr[2]);
             return true;
         }catch(Exception e){
@@ -98,4 +105,6 @@ return jwt;
             return false;
         }
     }
+    // 1624969391 now
+    // 1624971578 expired
 }

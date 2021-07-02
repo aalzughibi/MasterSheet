@@ -2,7 +2,10 @@ package master.sheet.mastersheet.excelHelper;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.InputStream;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -27,12 +30,12 @@ import master.sheet.mastersheet.Entity.ProjectEntity;
 import master.sheet.mastersheet.Entity.TaskEntity;
 
 public class excelHelper {
-    public static Map<String, Object> readFromExcel(String filename) {
+    public static Map<String, Object> readFromExcel(String filename,InputStream is) {
         Map<String, Object> data = new HashMap<>();
         try {
             System.out.println("start");
             Workbook wb;
-            wb = WorkbookFactory.create(new File(filename));
+            wb = WorkbookFactory.create(is);
             Sheet sh;
             sh = wb.getSheet("Sheet1");
             int noOfRows = sh.getLastRowNum() + 1;
@@ -133,19 +136,29 @@ public class excelHelper {
         // for project
         // for item
         // for task
-        data.put("1",
-                new Object[] { "item id ", "item name", "item type", "item start date", "item end date", "item remarks",
-                        "po no", "po start date", "po end date", "po value", "project id", "project name",
-                        "project start date", "project end date", "project remarks", "project manager", "project type",
-                        "project stauts", "tasks list" });
+        List<String> taskList = new ArrayList<String>();
+        for(TaskEntity te: task)
+                taskList.add(te.getItem_id());
+        int counter =0;
+        for(String tl:taskList)
+            if (Collections.frequency(taskList, tl)>counter)
+                counter=Collections.frequency(taskList, tl);
+        String arrayString = "item id,item name,item type,item start date,item end date,item remarks,"+
+                    "po no,po start date,po end date,po value,project id,project name,"+
+                    "project start date,project end date,project remarks,project manager,project type,project stauts";
+        for(int i=0;i<counter;i++)
+            arrayString+=",Task"+(i+1)+",Task description"+(i+1);
+        System.out.println(arrayString);
+        String[] strArr = arrayString.split(",");
+        System.out.println("########################################################################");
+        for(String str:strArr)
+        System.out.print(str+" ");
+        
+        data.put("1",strArr);
         for (ProjectEntity pe : project) {
             for (ItemEntity ie : item) {
                 if (ie.getItem_id().equals(pe.getProject_id())) {
-                    String tasklist = "";
-                    for (TaskEntity te : task) {
-                        if (te.getItem_id().equals(ie.getItem_id()))
-                            tasklist += te.getTask_id() + "-" + te.getTask_description() + "\n\r";
-                    }
+                    
                     PoEntity poE = new PoEntity();
                     for (PoEntity poee : po) {
                         if (poee.getPo_id().equals(ie.getPo_no())) {
@@ -154,12 +167,24 @@ public class excelHelper {
                         }
                     }
                     System.out.println(poE.getPo_id()+" "+poE.getStart_date());
-                    data.put(ie.getItem_id(),
-                            new Object[] { ie.getItem_id(), ie.getItem_name(), ie.getItem_type(), ie.getStart_date().toString(),
-                                    ie.getEnd_date().toString(), ie.getItem_remarks(), ie.getPo_no(), poE.getStart_date().toString(),
-                                    poE.getEnd_date().toString(), ie.getPo_value(), ie.getProject_id(), pe.getProject_name(),
-                                    pe.getStart_date().toString(), pe.getEnd_date().toString(), pe.getRemarks(), pe.getProject_manager(),
-                                    pe.getProject_type(), tasklist });
+                    // L
+                    List<Object> rowList = new ArrayList<Object>();
+                    Object[] obj = { ie.getItem_id(), ie.getItem_name(), ie.getItem_type(), ie.getStart_date().toString(),
+                        ie.getEnd_date().toString(), ie.getItem_remarks(), ie.getPo_no(), poE.getStart_date().toString(),
+                        poE.getEnd_date().toString(), ie.getPo_value(), ie.getProject_id(), pe.getProject_name(),
+                        pe.getStart_date().toString(), pe.getEnd_date().toString(), pe.getRemarks(), pe.getProject_manager(),
+                        pe.getProject_type(),pe.getProject_status() };
+                    for(Object ob:obj){
+                        rowList.add(ob);
+                    }
+                    for (TaskEntity te : task) {
+                        if (te.getItem_id().equals(ie.getItem_id())){
+                            rowList.add(te.getTask_id());
+                            rowList.add(te.getTask_description());
+                        } 
+                    }
+                    obj = rowList.toArray();
+                    data.put(ie.getItem_id(),obj);
                 }
             }
         }

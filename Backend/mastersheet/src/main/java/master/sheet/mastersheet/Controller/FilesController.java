@@ -20,10 +20,12 @@ import master.sheet.mastersheet.Service.ProjectService;
 import master.sheet.mastersheet.Service.TaskService;
 import master.sheet.mastersheet.Service.UserSerivce;
 import master.sheet.mastersheet.excelHelper.excelHelper;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 @RestController
 @RequestMapping("file")
 public class FilesController {
+    private static final Logger logger = LoggerFactory.getLogger(FilesController.class);
     @Autowired
     ProjectService projectService;
     @Autowired
@@ -34,10 +36,12 @@ public class FilesController {
     TaskService taskService;
     @Autowired
     UserSerivce userService;
-    // uploadfile and insert to database
+    // [POST] upload files into database with proccessing
+    // url: /file/upload
     @PostMapping("/upload")
     public ResponseEntity<?> uploadFiles(@RequestHeader("Authorization") String header_jwt,@RequestParam("Files") MultipartFile[] files) {
         try {
+            logger.info("Start upload file");
             if(!Auth.isAdmin(userService,header_jwt))
                 return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
             Map<String, Object> items = new HashMap<>();
@@ -89,6 +93,7 @@ public class FilesController {
                 System.out.println("Fail to Add");
             return new ResponseEntity<>(HttpStatus.OK);
         } catch (Exception e) {
+            logger.info(e.toString());
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
@@ -150,15 +155,24 @@ public class FilesController {
     }
 
     public Map<String, Object> upload_file(MultipartFile file) throws IOException {
+        System.out.println("------------------Start------------------");
+        System.out.println("OriginalFilename: "+file.getOriginalFilename());
+        System.out.println("Size: "+file.getSize());
+        System.out.println("Name: "+file.getName());
+        System.out.println("Content: "+file.getContentType());
+        System.out.println("Resource: "+file.getResource());
+        System.out.println("Bytes: "+file.getBytes());
+        System.out.println("------------------End------------------");
         // FILE_DIRECTORY+
         // File myFile = new File(file.getOriginalFilename());
         // myFile.createNewFile();
         // FileOutputStream fos = new FileOutputStream(myFile);
         // fos.write(file.getBytes());
         // fos.close();
-        return excelHelper.readFromExcel(file.getOriginalFilename());
+        return excelHelper.readFromExcel(file.getOriginalFilename(),file.getInputStream());
     }
-
+// [GET] Download excel sheet into user device
+// url: /file/download
     @GetMapping("/download")
     public ResponseEntity<?> downloadFile(@RequestHeader("Authorization") String header_jwt) {
         try {
@@ -170,7 +184,7 @@ public class FilesController {
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
 
         } catch (Exception e) {
-            System.out.println(e);
+            logger.info(e.toString());
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }

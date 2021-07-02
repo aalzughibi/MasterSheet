@@ -1,9 +1,15 @@
 package master.sheet.mastersheet.Entity;
 
 import java.io.Serializable;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 
 import javax.persistence.*;
+
+import master.sheet.mastersheet.payload.request.SignUpRequest;
+import master.sheet.mastersheet.payload.request.UpdateUserRequest;
 
 @Entity
 @Table(name="User")
@@ -33,7 +39,30 @@ public class UserEntity implements Serializable{
     @Column(name = "uid",nullable=false)
     private String uid;
     
+public UserEntity(){
 
+}
+public UserEntity(SignUpRequest sr) throws ParseException{
+username = sr.getUsername();
+email = sr.getEmail();
+role = sr.getRole();
+first_name = sr.getFirst_name();
+last_name=sr.getLast_name();
+SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
+    BirthDate = formatter.parse(sr.getBirthDate());
+
+display_name = sr.getDisplay_name();
+}
+public UserEntity(UpdateUserRequest sr) throws ParseException{
+    email = sr.getEmail();
+    role = sr.getRole();
+    first_name = sr.getFirst_name();
+    last_name=sr.getLast_name();
+    SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
+        BirthDate = formatter.parse(sr.getBirthDate());
+    
+    display_name = sr.getDisplay_name();
+    }
     /**
      * @return Long return the Id
      */
@@ -53,6 +82,23 @@ public class UserEntity implements Serializable{
      */
     public String getUsername() {
         return username;
+    }
+
+    @Override
+    public String toString() {
+        return "{" +
+            " Id='" + getId() + "'" +
+            ", username='" + getUsername() + "'" +
+            ", email='" + getEmail() + "'" +
+            ", password='" + getPassword() + "'" +
+            ", role='" + getRole() + "'" +
+            ", first_name='" + getFirst_name() + "'" +
+            ", last_name='" + getLast_name() + "'" +
+            ", BirthDate='" + getBirthDate() + "'" +
+            ", display_name='" + getDisplay_name() + "'" +
+            ", first_time='" + isFirst_time() + "'" +
+            ", uid='" + getUid() + "'" +
+            "}";
     }
 
     /**

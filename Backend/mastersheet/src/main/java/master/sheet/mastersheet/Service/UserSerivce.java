@@ -1,7 +1,6 @@
 package master.sheet.mastersheet.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -17,15 +16,13 @@ public class UserSerivce {
         List<UserEntity> userList = userRepository.findAll();
         return userList;
     }
-    public UserEntity getUserByUID(String uid)throws Exception{
-        List<UserEntity> userList = getAllUsers();
-        for(UserEntity ul:userList){
-            if(ul.getUid().equals(uid))
-                return ul;
-        }
-        throw new Exception("User not Found");
+    public UserEntity getUserByUID(String uid){
+        return userRepository.findByUid(uid).get();
+        
     }
-    
+    public UserEntity getUserByUsername(String username){
+        return userRepository.findByUsername(username).get(); 
+    }
     public UserEntity updateUser(UserEntity user)throws Exception{
         UserEntity us = getUserByUID(user.getUid());
         if (us !=null){
@@ -74,21 +71,20 @@ public class UserSerivce {
         else
         throw new Exception("User not Found");
     }
-    public boolean check_username_and_password(String username,String password){
-        List<UserEntity> userList = getAllUsers();
-        for(UserEntity ue:userList){
-            if(ue.getUsername().equals(username) && ue.getPassword().equals(password))
-            return true;
-        }
-        return false;
-    }
-    public UserEntity check_and_retrive(String username,String password){
-        List<UserEntity> userList = getAllUsers();
-        for(UserEntity ue:userList){
-            if(ue.getUsername().equals(username) && ue.getPassword().equals(password))
-            return ue;
-        }
-        return null;
+
+    public UserEntity checkLoginAndRetrive(String username,String password){
+        UserEntity userEntity = getUserByUsername(username);
+       if(userEntity!=null){
+           if(password.equals(userEntity.getPassword())){
+               return userEntity;
+           }
+           else{
+               return null;
+           }
+       }
+       else{
+           return null;
+       }
     }
     public boolean isExist(String uid){
         return userRepository.existsByUid(uid);

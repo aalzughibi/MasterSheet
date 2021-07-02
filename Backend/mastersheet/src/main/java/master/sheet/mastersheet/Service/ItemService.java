@@ -1,17 +1,15 @@
 package master.sheet.mastersheet.Service;
-
-
 import java.util.List;
 import java.util.Optional;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import master.sheet.mastersheet.Entity.ItemEntity;
 import master.sheet.mastersheet.Repository.ItemRepository;
 
+
 @Service
-public class ItemService {
+public class ItemService  {
+    
     @Autowired
     ItemRepository itemRepository;
     public List<ItemEntity> getAllItems(){

@@ -4,7 +4,7 @@ public class LoginReponse {
     private String jwtToken;
     private int Role;
     private boolean first_time_login;
-    private int expiredAt;
+    private long expiredAt;
 
     /**
      * @return String return the jwtToken
@@ -51,14 +51,14 @@ public class LoginReponse {
     /**
      * @return int return the expiredAt
      */
-    public int getExpiredAt() {
+    public long getExpiredAt() {
         return expiredAt;
     }
 
     /**
      * @param expiredAt the expiredAt to set
      */
-    public void setExpiredAt(int expiredAt) {
+    public void setExpiredAt(long expiredAt) {
         this.expiredAt = expiredAt;
     }
 
