@@ -36,6 +36,9 @@ public class ItemEntity implements Serializable{
     private String payment_value;
     @Column(name = "payment_date",nullable=true)
     private Date payment_date;
+    @Column(name = "version")
+	@Version
+	private Long version;
     /**
      * @return Long return the id
      */
@@ -217,6 +220,35 @@ public class ItemEntity implements Serializable{
      */
     public void setPayment_date(Date payment_date) {
         this.payment_date = payment_date;
+    }
+
+
+    /**
+     * @return String return the itemId
+     */
+    public String getItemId() {
+        return itemId;
+    }
+
+    /**
+     * @param itemId the itemId to set
+     */
+    public void setItemId(String itemId) {
+        this.itemId = itemId;
+    }
+
+    /**
+     * @return Long return the version
+     */
+    public Long getVersion() {
+        return version;
+    }
+
+    /**
+     * @param version the version to set
+     */
+    public void setVersion(Long version) {
+        this.version = version;
     }
 
 }

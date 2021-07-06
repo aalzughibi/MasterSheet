@@ -5,10 +5,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import master.sheet.mastersheet.Entity.ItemEntity;
 import master.sheet.mastersheet.Repository.ItemRepository;
+import master.sheet.mastersheet.Service.interfaces.ItemInterface;
 
 
 @Service
-public class ItemService  {
+public class ItemService implements ItemInterface{
     
     @Autowired
     ItemRepository itemRepository;

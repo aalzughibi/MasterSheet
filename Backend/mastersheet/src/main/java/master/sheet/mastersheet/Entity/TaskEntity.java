@@ -15,7 +15,9 @@ public class TaskEntity implements Serializable {
     private String item_id;
     @Column(name = "task_description")
     private String task_description;
-
+    @Column(name = "version")
+	@Version
+	private Long version;
     /**
      * @return Long return the id
      */
@@ -70,6 +72,35 @@ public class TaskEntity implements Serializable {
      */
     public void setTask_description(String task_description) {
         this.task_description = task_description;
+    }
+
+
+    /**
+     * @return String return the taskId
+     */
+    public String getTaskId() {
+        return taskId;
+    }
+
+    /**
+     * @param taskId the taskId to set
+     */
+    public void setTaskId(String taskId) {
+        this.taskId = taskId;
+    }
+
+    /**
+     * @return Long return the version
+     */
+    public Long getVersion() {
+        return version;
+    }
+
+    /**
+     * @param version the version to set
+     */
+    public void setVersion(Long version) {
+        this.version = version;
     }
 
 }

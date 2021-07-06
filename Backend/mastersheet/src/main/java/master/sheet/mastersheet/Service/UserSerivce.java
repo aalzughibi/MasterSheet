@@ -7,9 +7,9 @@ import org.springframework.stereotype.Service;
 
 import master.sheet.mastersheet.Entity.UserEntity;
 import master.sheet.mastersheet.Repository.UserRepository;
-
+import master.sheet.mastersheet.Service.interfaces.UserInterface;
 @Service
-public class UserSerivce {
+public class UserSerivce implements UserInterface {
     @Autowired
     UserRepository userRepository;
     public List<UserEntity> getAllUsers(){

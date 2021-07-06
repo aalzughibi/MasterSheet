@@ -38,7 +38,9 @@ public class UserEntity implements Serializable{
     private boolean first_time;
     @Column(name = "uid",nullable=false)
     private String uid;
-    
+    @Column(name = "version")
+	@Version
+	private Long version;
 public UserEntity(){
 
 }
@@ -232,6 +234,21 @@ public UserEntity(UpdateUserRequest sr) throws ParseException{
      */
     public void setUid(String uid) {
         this.uid = uid;
+    }
+
+
+    /**
+     * @return Long return the version
+     */
+    public Long getVersion() {
+        return version;
+    }
+
+    /**
+     * @param version the version to set
+     */
+    public void setVersion(Long version) {
+        this.version = version;
     }
 
 }

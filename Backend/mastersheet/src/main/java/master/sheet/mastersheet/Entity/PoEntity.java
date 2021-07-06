@@ -18,7 +18,9 @@ public class PoEntity implements Serializable{
     @Column(name = "end_date")
     @Temporal(TemporalType.DATE)
     private Date end_date;
-    
+    @Column(name = "version")
+	@Version
+	private Long version;
 
     /**
      * @return Long return the id
@@ -74,6 +76,35 @@ public class PoEntity implements Serializable{
      */
     public void setEnd_date(Date end_date) {
         this.end_date = end_date;
+    }
+
+
+    /**
+     * @return String return the poId
+     */
+    public String getPoId() {
+        return poId;
+    }
+
+    /**
+     * @param poId the poId to set
+     */
+    public void setPoId(String poId) {
+        this.poId = poId;
+    }
+
+    /**
+     * @return Long return the version
+     */
+    public Long getVersion() {
+        return version;
+    }
+
+    /**
+     * @param version the version to set
+     */
+    public void setVersion(Long version) {
+        this.version = version;
     }
 
 }

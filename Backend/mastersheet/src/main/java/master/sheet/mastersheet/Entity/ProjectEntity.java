@@ -30,7 +30,9 @@ public class ProjectEntity implements Serializable{
     private String project_type;
     @Column(name="project_status")
     private String project_status;
-
+    @Column(name = "version")
+	@Version
+	private Long version;
     /**
      * @return Long return the id
      */
@@ -169,6 +171,35 @@ public class ProjectEntity implements Serializable{
      */
     public void setProject_status(String project_status) {
         this.project_status = project_status;
+    }
+
+
+    /**
+     * @return String return the projectId
+     */
+    public String getProjectId() {
+        return projectId;
+    }
+
+    /**
+     * @param projectId the projectId to set
+     */
+    public void setProjectId(String projectId) {
+        this.projectId = projectId;
+    }
+
+    /**
+     * @return Long return the version
+     */
+    public Long getVersion() {
+        return version;
+    }
+
+    /**
+     * @param version the version to set
+     */
+    public void setVersion(Long version) {
+        this.version = version;
     }
 
 }

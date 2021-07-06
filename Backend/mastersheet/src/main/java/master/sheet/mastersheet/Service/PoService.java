@@ -8,9 +8,10 @@ import org.springframework.stereotype.Service;
 
 import master.sheet.mastersheet.Entity.PoEntity;
 import master.sheet.mastersheet.Repository.PoReposiory;
+import master.sheet.mastersheet.Service.interfaces.PoInterface;
 
 @Service
-public class PoService {
+public class PoService implements PoInterface{
     @Autowired
     PoReposiory poReposiory;
     public List<PoEntity> getAllPos(){

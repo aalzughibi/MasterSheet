@@ -8,9 +8,10 @@ import org.springframework.stereotype.Service;
 
 import master.sheet.mastersheet.Entity.TaskEntity;
 import master.sheet.mastersheet.Repository.TaskRepository;
+import master.sheet.mastersheet.Service.interfaces.TaskInterface;
 
 @Service
-public class TaskService {
+public class TaskService implements TaskInterface{
     @Autowired
     TaskRepository taskRepository;
     

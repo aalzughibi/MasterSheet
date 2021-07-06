@@ -8,9 +8,10 @@ import org.springframework.stereotype.Service;
 
 import master.sheet.mastersheet.Entity.ProjectEntity;
 import master.sheet.mastersheet.Repository.ProjectRepository;
+import master.sheet.mastersheet.Service.interfaces.ProjectInterface;
 
 @Service
-public class ProjectService {
+public class ProjectService implements ProjectInterface{
    @Autowired
    ProjectRepository projectRepository;
    public List<ProjectEntity> getAllProjects(){
