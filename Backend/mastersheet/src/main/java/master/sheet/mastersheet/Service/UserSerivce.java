@@ -1,10 +1,7 @@
 package master.sheet.mastersheet.Service;
-
 import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import master.sheet.mastersheet.Entity.UserEntity;
 import master.sheet.mastersheet.Repository.UserRepository;
 import master.sheet.mastersheet.Service.interfaces.UserInterface;
@@ -26,12 +23,12 @@ public class UserSerivce implements UserInterface {
     public UserEntity updateUser(UserEntity user)throws Exception{
         UserEntity us = getUserByUID(user.getUid());
         if (us !=null){
-        us.setEmail(us.getEmail()==user.getEmail()?us.getEmail():user.getEmail());
-        us.setRole(us.getRole()==user.getRole()?us.getRole():user.getRole());
-        us.setFirst_name(us.getFirst_name()==user.getFirst_name()?us.getFirst_name():user.getFirst_name());
-        us.setLast_name(us.getLast_name()==user.getLast_name()?us.getLast_name():user.getLast_name());
-        us.setBirthDate(us.getBirthDate()==user.getBirthDate()?us.getBirthDate():user.getBirthDate());
-        us.setDisplay_name(us.getDisplay_name()==user.getDisplay_name()?us.getDisplay_name():user.getDisplay_name());
+        us.setEmail(user.getEmail());
+        us.setRole(user.getRole());
+        us.setFirst_name(user.getFirst_name());
+        us.setLast_name(user.getLast_name());
+        us.setBirthDate(user.getBirthDate());
+        us.setDisplay_name(user.getDisplay_name());
         us = userRepository.save(us);
         return us;
         }
@@ -45,7 +42,7 @@ public class UserSerivce implements UserInterface {
     public UserEntity updateDisplayName(UserEntity user)throws Exception{
         UserEntity us = getUserByUID(user.getUid());
         if (us !=null){
-        us.setDisplay_name(us.getDisplay_name()==user.getDisplay_name()?us.getDisplay_name():user.getDisplay_name());
+        us.setDisplay_name(user.getDisplay_name());
         us = userRepository.save(us);
         return us;
         }
